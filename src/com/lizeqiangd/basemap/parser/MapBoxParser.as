@@ -17,15 +17,28 @@ package com.lizeqiangd.basemap.parser
 		public static const Mapbox_Type_JPG80:String = 'jpg80'
 		public static const Mapbox_Type_JPG90:String = 'jpg90'
 		public static const TileSize:uint=256
-		
+				
 		public static var map_style:String = 'lizeqiangd.09aab23b';
-		public var mapbox_maptype:String =MapBoxParser.Mapbox_Type_PNG256;		
+		public var mapbox_maptype:String = MapBoxParser.Mapbox_Type_PNG256;		
+		public var now_z:uint = 0
+		
+		private var bound_up:Number = 90
+		private var bound_down:Number = -90
+		private var bound_left:Number = -180
+		private var bound_right:Number = 180
+		
+		
 		public function MapBoxParser()
 		{
 			super(MapBoxParser.Mapbox_BaseUrl);
 		
 		}
-		
+		public function getTilexByLng(lng:Number ):Number {
+			return 0
+		}
+		public function getTileyByLat(lat:Number ):Number {
+			return 0
+		}
 		public function getUrlByXYZ(_x:Number, _y:Number, _z:Number):String
 		{
 			var x:uint = _x

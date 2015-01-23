@@ -37,7 +37,7 @@
     </source-path>
   </compiler>
   <file-specs>
-    <path-element>D:\wy\code\lizeqiangd\as3\BaseMap\src\Test.as</path-element>
+    <path-element>D:\wy\code\lizeqiangd\as3\BaseMap\src\Test2.as</path-element>
   </file-specs>
   <default-background-color>#A0A0A0</default-background-color>
   <default-frame-rate>30</default-frame-rate>
