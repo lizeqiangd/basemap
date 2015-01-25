@@ -1,8 +1,9 @@
 package
 {
-	import com.lizeqiangd.basemap.BaseMap;
-	import com.lizeqiangd.basemap.BaseMap;
-	import com.lizeqiangd.basemap.parser.MapBoxParser;
+	import com.lizeqiangd.basebox.BaseMap;
+	import com.lizeqiangd.basebox.BaseMap;
+	import com.lizeqiangd.basebox.config.MapSetting;
+	import com.lizeqiangd.basebox.parser.MapBoxParser;
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -26,14 +27,15 @@ package
 				addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
-		private	var bm:BaseMap = new BaseMap
+		private	var bm:BaseMap=BaseMap.getInstance
 		private function init(e:Event = null):void
 		{
 			trace('************************************')
 			stage.scaleMode = StageScaleMode.NO_SCALE
 			stage.align = StageAlign.TOP_LEFT
-			bm.setMapType = 'mapbox'
-			bm.setToken = 'pk.eyJ1IjoibGl6ZXFpYW5nZCIsImEiOiJKSHZ6RHNZIn0.9BZ9QpTL3MmJXeR9biD9Sw'
+			//bm.setMapType = 'mapbox'
+			bm.config(new MapSetting)
+			//bm.setToken = 'pk.eyJ1IjoibGl6ZXFpYW5nZCIsImEiOiJKSHZ6RHNZIn0.9BZ9QpTL3MmJXeR9biD9Sw'
 			onStageResize(null)
 			bm.init ();
 			addChild(bm)
@@ -49,10 +51,8 @@ package
 		
 		private function onStageResize(e:Event):void 
 		{
-			//bm.x = stage.stageWidth / 2
-			//bm.y=stage.stageHeight/2
-			bm.mapHeight=stage.stageHeight
-			bm.mapWidth=stage.stageWidth
+			bm.setMapHeight=stage.stageHeight
+			bm.setMapWidth=stage.stageWidth
 		}
 		
 	
