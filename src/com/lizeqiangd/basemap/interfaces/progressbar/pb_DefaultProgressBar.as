@@ -1,4 +1,4 @@
-package com.lizeqiangd.basebox.interfaces.progressbar {
+package com.lizeqiangd.basemap.interfaces.progressbar {
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	

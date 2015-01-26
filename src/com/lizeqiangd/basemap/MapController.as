@@ -1,6 +1,6 @@
-package com.lizeqiangd.basebox
+package com.lizeqiangd.basemap
 {
-	import com.lizeqiangd.basebox.layer.MapLayer;
+	import com.lizeqiangd.basemap.layer.MapLayer;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
@@ -41,6 +41,8 @@ package com.lizeqiangd.basebox
 				//e.stageY-_mousedown_y
 				//trace(e.stageX - _mousedown_x, e.stageY - _mousedown_y)
 				map_layer.movement(e.stageX - _mousedown_x, e.stageY - _mousedown_y)
+				_mousedown_x = e.stageX
+				_mousedown_y = e.stageY
 			}
 		}
 		
@@ -94,8 +96,8 @@ package com.lizeqiangd.basebox
 			
 			if (true)
 			{
-				this.graphics.beginFill(0xff9900, 0.3)
-				this.graphics.drawRect(0, 0, map_width, map_height)
+				//this.graphics.beginFill(0xff9900, 0.3)
+				//this.graphics.drawRect(0, 0, map_width, map_height)
 			}
 		}
 	}

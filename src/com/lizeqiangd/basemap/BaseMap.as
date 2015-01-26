@@ -1,10 +1,10 @@
-package com.lizeqiangd.basebox
+package com.lizeqiangd.basemap
 {
-	import com.lizeqiangd.basebox.config.MapSetting;
-	import com.lizeqiangd.basebox.layer.MapLayer;
-	import com.lizeqiangd.basebox.parser.iMapUrlParser;
-	import com.lizeqiangd.basebox.parser.MapBoxParser;
-	import com.lizeqiangd.basebox.tile.TileLoader;
+	import com.lizeqiangd.basemap.config.MapSetting;
+	import com.lizeqiangd.basemap.layer.MapLayer;
+	import com.lizeqiangd.basemap.parser.iMapParser;
+	import com.lizeqiangd.basemap.parser.MapBoxParser;
+	import com.lizeqiangd.basemap.tile.TileLoader;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	
@@ -14,36 +14,39 @@ package com.lizeqiangd.basebox
 	 */
 	public class BaseMap extends Sprite
 	{
-		private static var instance:BaseMap		
+		/**  单例模式 **/
+		private static var instance:BaseMap
+		
 		public static function get getInstance():BaseMap
 		{
 			if (instance == null)
 			{
 				instance = new BaseMap();
 			}
-			return instance;		
+			return instance;
 		}
 		
-		private var map_setting:MapSetting
-		private var mapParser:iMapUrlParser
 		//private var mask_shape:Shape
 		
 		private var _mapWidth:Number = 0
 		private var _mapHeight:Number = 0
 		
+		/**   地图核心单例 **/
 		private var map_conroller:MapController
 		private var map_layer:MapLayer
+		private var map_setting:MapSetting
+		private var map_parser:iMapParser
 		
 		public function BaseMap()
 		{
 			if (instance != null)
 			{
 				throw new Error("please use getInstance method.");
-			}			
+			}
 		}
 		
 		/**
-		 * 整体设置
+		 * 整体设置 设置后全局直接开始初始化. 之后可能考虑其他方式.
 		 * @param	value
 		 */
 		public function config(value:MapSetting):void
@@ -51,13 +54,13 @@ package com.lizeqiangd.basebox
 			switch (value.basemap_type)
 			{
 				case 'mapbox': 
-					mapParser = new MapBoxParser
+					map_parser = new MapBoxParser
 					//mapParser.setMapToken = value.mapbox_token
 					//mapP
 					break;
 				default: 
 			}
-		
+			
 			map_layer = new MapLayer
 			addChild(map_layer)
 			map_conroller = new MapController
@@ -66,30 +69,16 @@ package com.lizeqiangd.basebox
 			addChild(map_conroller)
 		}
 		
-		public function set setMapWidth(value:Number):void
-		{
-			_mapWidth = value
-			map_conroller.resize(_mapWidth, _mapHeight)
-			map_layer.resize(_mapWidth, _mapHeight)
-		}
-		
-		public function set setMapHeight(value:Number):void
-		{
-			_mapHeight = value
-			map_conroller.resize(_mapWidth, _mapHeight)
-			map_layer.resize(_mapWidth, _mapHeight)
-		}
-		
 		/**
 		 * 初始化地图
 		 */
 		public function init():void
 		{
-			if (!mapParser)
+			if (!map_parser)
 			{
 				trace('BaseMap: not setMapType.');
 				return
-			}			
+			}
 			map_layer.center(121.13131313, 31.2323, 17);
 		}
 		
@@ -155,15 +144,41 @@ package com.lizeqiangd.basebox
 		//_mapWidth = value;
 		//mapResize()
 		//}
+		public function setMapSize(w:Number, h:Number):void
+		{
+			_mapWidth = w
+			_mapHeight = h
+			map_conroller.resize(_mapWidth, _mapHeight)
+			map_layer.resize(_mapWidth, _mapHeight)
+		}
+		
+		public function set setMapWidth(value:Number):void
+		{
+			_mapWidth = value
+			map_conroller.resize(_mapWidth, _mapHeight)
+			map_layer.resize(_mapWidth, _mapHeight)
+		}
+		
+		public function set setMapHeight(value:Number):void
+		{
+			_mapHeight = value
+			map_conroller.resize(_mapWidth, _mapHeight)
+			map_layer.resize(_mapWidth, _mapHeight)
+		}
 		
 		public function get getMapController():MapController
 		{
 			return map_conroller
 		}
 		
-		public function get getMapParser():iMapUrlParser
+		public function get getMapParser():iMapParser
 		{
-			return mapParser
+			return map_parser
+		}
+		
+		public function get getMapLayer():MapLayer
+		{
+			return map_layer
 		}
 	}
 

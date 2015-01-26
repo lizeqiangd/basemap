@@ -1,4 +1,4 @@
-package com.lizeqiangd.basebox.parser {
+package com.lizeqiangd.basemap.parser {
 	/**
 	 * ...
 	 * @author Lizeqiangd

@@ -1,4 +1,4 @@
-package com.lizeqiangd.basebox.config
+package com.lizeqiangd.basemap.config
 {
 	
 	/**
@@ -7,16 +7,16 @@ package com.lizeqiangd.basebox.config
 	 */
 	public dynamic class MapSetting extends Object
 	{
-		private static var instant:MapSetting
+		private static var instance:MapSetting
 		
-		public static function get getInstant():MapSetting
+		public static function get getInstance():MapSetting
 		{
-			if (instant)
+			if (instance)
 			{
-				return instant
+				return instance
 			}
-			instant = new MapSetting
-			return getInstant;
+			instance = new MapSetting
+			return instance;
 		}
 		
 		public function parse():MapSetting
@@ -28,9 +28,11 @@ package com.lizeqiangd.basebox.config
 		public var map_height:Number = 100
 		public var tile_size:Number = 256
 		
+		/** 当瓦块离开屏幕tile_outsize_count个瓦块大小时移除 **/
+		public var tile_outsize_count:int=2
+		
 		/**  mapbox setting **/
 		public var basemap_type:String = 'mapbox'
-		
 		public var mapbox_style:String = 'lizeqiangd.09aab23b';
 		public var mapbox_tiletype:String = Mapbox_Type_PNG256;
 		public var mapbox_token:String = 'pk.eyJ1IjoibGl6ZXFpYW5nZCIsImEiOiJKSHZ6RHNZIn0.9BZ9QpTL3MmJXeR9biD9Sw'

@@ -1,4 +1,4 @@
-package com.lizeqiangd.basebox.component
+package com.lizeqiangd.basemap.component
 {
 	
 	/**

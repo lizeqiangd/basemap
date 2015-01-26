@@ -1,4 +1,4 @@
-package com.lizeqiangd.basebox.layer
+package com.lizeqiangd.basemap.layer
 {
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -28,6 +28,7 @@ package com.lizeqiangd.basebox.layer
 			{
 				var tileslayer:TilesLayer = new TilesLayer(i)
 				arrTilesLayer[i] = tileslayer
+					//addChild(tileslayer)
 			}
 		}
 		
@@ -45,8 +46,9 @@ package com.lizeqiangd.basebox.layer
 		
 		public function movement(delta_x:Number, detal_y:Number):void
 		{
-			getDisplayLayer.x = delta_x
-			getDisplayLayer.y = detal_y
+			getDisplayLayer.movement(delta_x, detal_y)
+			//getDisplayLayer.x = delta_x
+			//getDisplayLayer.y = detal_y
 		}
 		
 		public function center(lng:Number, lat:Number, z:uint):void
