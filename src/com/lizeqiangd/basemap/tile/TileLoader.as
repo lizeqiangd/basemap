@@ -22,6 +22,7 @@ package com.lizeqiangd.basemap.tile
 		private var loader:Loader
 		private var url:String = ''
 		private var pb:pb_DefaultProgressBar
+		private var tx:TextField
 		
 		private var tile_size:Number = 256
 		
@@ -31,6 +32,7 @@ package com.lizeqiangd.basemap.tile
 		
 		private var use_anime:Boolean = true
 		private var use_progressbar:Boolean = true
+		private var use_information:Boolean = true;
 		
 		public function TileLoader()
 		{
@@ -46,6 +48,14 @@ package com.lizeqiangd.basemap.tile
 			if (use_progressbar)
 			{
 				addChild(pb)
+			}
+			if (use_information)
+			{
+				tx = new TextField
+				tx.defaultTextFormat = new TextFormat('微软雅黑', 15, 0x22ccff)
+				tx.height = 25
+				tx.width = 256
+				addChild(tx)
 			}
 		}
 		
@@ -80,18 +90,11 @@ package com.lizeqiangd.basemap.tile
 			tile_x = _x
 			tile_y = _y
 			tile_z = _z
-			//showInformation()
-		}
-		
-		public function showInformation():void
-		{
-			var tx:TextField = new TextField
-			tx.defaultTextFormat = new TextFormat('微软雅黑', 15, 0x22ccff)
-			tx.height = 25
-			tx.width = 256
-			addChild(tx)
-			tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z
-			this.cacheAsBitmap = true
+			if (use_information)
+			{
+				tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z
+				this.cacheAsBitmap = true
+			}
 		}
 		
 		/**

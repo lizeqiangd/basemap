@@ -55,39 +55,29 @@ package com.lizeqiangd.basemap
 		}
 		
 		/**
-		 * 整体设置 设置后全局直接开始初始化. 之后可能考虑其他方式.
-		 * @param	value
+		 * 初始化地图
 		 */
-		public function config(value:MapSetting):void
+		public function init():void
 		{
-			switch (value.basemap_type)
+			map_setting = MapSetting.getInstance
+			switch (map_setting.basemap_type)
 			{
 				case 'mapbox': 
+					//当是mapbox的时候
 					map_parser = new MapBoxParser
-					//mapParser.setMapToken = value.mapbox_token
-					//mapP
+					map_setting.tile_size = map_setting.Mapbox_Tile_Size
+					map_setting.max_level = map_setting.Mapbox_Max_Level
 					break;
 				default: 
 			}
 			
 			map_layer = new MapLayer
-			addChild(map_layer)
 			map_conroller = new MapController
 			map_conroller.addMapController()
 			map_conroller.setMapLayer = map_layer
+			addChild(map_layer)
 			addChild(map_conroller)
-		}
-		
-		/**
-		 * 初始化地图
-		 */
-		public function init():void
-		{
-			if (!map_parser)
-			{
-				trace('BaseMap: not setMapType.');
-				return
-			}
+			
 			map_layer.center(121.13131313, 31.2323, 17);
 		}
 		

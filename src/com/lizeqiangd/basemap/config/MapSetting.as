@@ -24,19 +24,25 @@ package com.lizeqiangd.basemap.config
 			return this;
 		}
 		
+		/** 当前地图的尺寸 **/
 		public var map_width:Number = 100
 		public var map_height:Number = 100
+		
+		/**  瓦片的尺寸 **/
 		public var tile_size:Number = 256
+		
+		/**  地图最大显示缩放  **/
 		public var max_level:uint = Mapbox_Max_Level
 	
 		/** 当瓦块离开屏幕tile_outsize_count个瓦块大小时移除 **/
 		public var tile_outsize_count:int = 2
 		
 		/**  mapbox setting **/
-		public var basemap_type:String = 'mapbox'
-		public var mapbox_style:String = 'lizeqiangd.09aab23b';
+		public var basemap_type:String = ''
+		public var mapbox_style:String = '';
+		public var mapbox_token:String = ''
 		public var mapbox_tiletype:String = Mapbox_Type_PNG256;
-		public var mapbox_token:String = 'pk.eyJ1IjoibGl6ZXFpYW5nZCIsImEiOiJKSHZ6RHNZIn0.9BZ9QpTL3MmJXeR9biD9Sw'
+		
 		public const Mapbox_BaseUrl:String = 'http://api.tiles.mapbox.com/v4/'
 		public const Mapbox_Type_RETINA:String = '@2x.png'
 		public const Mapbox_Type_PNG32:String = 'png32'
