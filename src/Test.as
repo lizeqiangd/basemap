@@ -49,8 +49,18 @@ package
 			//im.load(new URLRequest(p.getUrlByXZY(0, 0, 0)))
 			//addChild(im)		
 			stage.addEventListener(Event.RESIZE, onStageResize)
-			setTimeout(onStageResize,100,null)
+			setTimeout(onStageResize, 100, null)
+			setTimeout(function():void
+				{
+					stage.addEventListener(Event.ENTER_FRAME, onEnterFrame)
+				}, 500)
+		
 			//setTimeout(bm.getMapLayer.movement,300,-513,-513)
+		}
+		
+		private function onEnterFrame(e:Event):void
+		{
+			//bm.getMapLayer.movement(1,1)
 		}
 		
 		private function onStageResize(e:Event):void

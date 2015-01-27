@@ -27,9 +27,10 @@ package com.lizeqiangd.basemap.config
 		public var map_width:Number = 100
 		public var map_height:Number = 100
 		public var tile_size:Number = 256
-		
+		public var max_level:uint = Mapbox_Max_Level
+	
 		/** 当瓦块离开屏幕tile_outsize_count个瓦块大小时移除 **/
-		public var tile_outsize_count:int=2
+		public var tile_outsize_count:int = 2
 		
 		/**  mapbox setting **/
 		public var basemap_type:String = 'mapbox'
@@ -46,6 +47,7 @@ package com.lizeqiangd.basemap.config
 		public const Mapbox_Type_JPG80:String = 'jpg80'
 		public const Mapbox_Type_JPG90:String = 'jpg90'
 		public const Mapbox_Tile_Size:uint = 256
+		public const Mapbox_Max_Level:uint = 22
 	}
 
 }

@@ -29,6 +29,9 @@ package com.lizeqiangd.basemap.tile
 		public var tile_y:int = 0
 		public var tile_z:int = 0
 		
+		private var use_anime:Boolean = true
+		private var use_progressbar:Boolean = true
+		
 		public function TileLoader()
 		{
 			loader = new Loader()
@@ -37,12 +40,13 @@ package com.lizeqiangd.basemap.tile
 			this.mouseChildren = false
 			this.mouseEnabled = false
 			this.addChild(loader)
-			//this.loader.alpha = 0.5			
-			//this.graphics.lineStyle(1, 0, .5)
-			//this.graphics.drawRect(0, 0, 256, 256)
+			
 			tile_size = MapSetting.getInstance.tile_size
 			pb = new pb_DefaultProgressBar
-			addChild(pb)
+			if (use_progressbar)
+			{
+				addChild(pb)
+			}
 		}
 		
 		/**
@@ -58,9 +62,12 @@ package com.lizeqiangd.basemap.tile
 			addUiListener()
 			
 			url = value
-			pb.init()
-			pb.y = -pb.height / 2 + tile_size / 2
-			pb.x = -pb.width / 2 + tile_size / 2
+			if (use_progressbar)
+			{
+				pb.init()
+				pb.y = -pb.height / 2 + tile_size / 2
+				pb.x = -pb.width / 2 + tile_size / 2
+			}
 			loader.load(new URLRequest(url), new LoaderContext(true))
 		}
 		
@@ -70,21 +77,21 @@ package com.lizeqiangd.basemap.tile
 		 */
 		public function setTilePosition(_x:Number, _y:Number, _z:Number):void
 		{
+			tile_x = _x
+			tile_y = _y
+			tile_z = _z
+			//showInformation()
+		}
+		
+		public function showInformation():void
+		{
+			var tx:TextField = new TextField
 			tx.defaultTextFormat = new TextFormat('微软雅黑', 15, 0x22ccff)
 			tx.height = 25
 			tx.width = 256
 			addChild(tx)
-			tile_x = _x
-			tile_y = _y
-			tile_z = _z
-		}
-		
-		public	var tx:TextField = new TextField
-		public function setInformation(value:String):void
-		{
-			
-			tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z + ' i:' + value
-			this.cacheAsBitmap=true
+			tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z
+			this.cacheAsBitmap = true
 		}
 		
 		/**
@@ -119,7 +126,10 @@ package com.lizeqiangd.basemap.tile
 		
 		private function onLoadProgress(e:ProgressEvent):void
 		{
-			pb.progress = e.bytesLoaded / e.bytesTotal;
+			if (use_progressbar)
+			{
+				pb.progress = e.bytesLoaded / e.bytesTotal;
+			}
 		}
 		
 		private function onLoadError(e:*):void
@@ -131,25 +141,42 @@ package com.lizeqiangd.basemap.tile
 		private function onLoadComplete(e:Event):void
 		{
 			removeUiListener()
-			loader.alpha = 0
-			loader.cacheAsBitmap=true
-			this.addEventListener(Event.ENTER_FRAME, onEnterFrameAnime);
+			if (use_anime)
+			{
+				loader.alpha = 0
+				this.addEventListener(Event.ENTER_FRAME, onEnterFrameAnime);
+			}
+			else
+			{
+				loader.cacheAsBitmap = true
+				if (use_progressbar)
+				{
+					pb.depose()
+					pb = null
+				}
+			}
 		}
 		
 		private function onEnterFrameAnime(e:Event):void
 		{
 			loader.alpha += 0.2
-			pb.alpha -= 0.2
-			pb.x = -pb.width / 2 + tile_size / 2
-			pb.y = -pb.height / 2 + tile_size / 2
-			pb.height -= 2
-			pb.width += 2
+			if (use_progressbar)
+			{
+				pb.alpha -= 0.2
+				pb.x = -pb.width / 2 + tile_size / 2
+				pb.y = -pb.height / 2 + tile_size / 2
+				pb.height -= 2
+				pb.width += 2
+			}
 			if (loader.alpha >= 1)
 			{
-				pb.depose()
-				pb = null
+				if (use_progressbar)
+				{
+					pb.depose()
+					pb = null
+				}
 				this.removeEventListener(Event.ENTER_FRAME, onEnterFrameAnime)
-					//trace('tile load complete')
+				loader.cacheAsBitmap = true
 			}
 		}
 		

@@ -7,7 +7,7 @@ package com.lizeqiangd.basemap.parser {
 	 */
 	public interface iMapParser 
 	{
-		function getUrlByXYZ(_x:Number, _y:Number, _z:Number):String
+		function getUrlByXYZ(_x:int, _y:int, _z:int):String
 		function getUrlByLatlng(latlng:LatLng):String 
 		function getStartTileByLatlng(latlng:LatLng):StartTile
 		function setZ(z:uint):uint

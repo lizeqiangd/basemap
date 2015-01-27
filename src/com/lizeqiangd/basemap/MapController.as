@@ -60,18 +60,22 @@ package com.lizeqiangd.basemap
 		
 		private function onMouseDoubleClick(e:MouseEvent):void
 		{
-			trace(e)
+			//trace(e)
 		
 		}
-		
+		/**
+		 * 鼠标滚轮操作
+		 * 往下滚是负 
+		 * @param	e
+		 */
 		private function onMouseWheel(e:MouseEvent):void
 		{
-			trace(e)
+			map_layer.scale(e.delta)
 		}
 		
 		private function onMouseClick(e:MouseEvent):void
 		{
-			trace(e)
+			//trace(e)
 		}
 		
 		public function removeMapController():void

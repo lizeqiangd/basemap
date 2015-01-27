@@ -24,7 +24,7 @@ package com.lizeqiangd.basemap.layer
 		private var num_width:uint = 0
 		private var num_height:uint = 0
 		
-		private var _z_index:uint = 17
+		private var _z_index:int = 0
 		private var top_left:LatLng
 		private var tile_array:Object
 		
@@ -61,23 +61,53 @@ package com.lizeqiangd.basemap.layer
 			var outsize:int = map_setting.tile_outsize_count * map_setting.tile_size
 			var tiles:TileLoader
 			var temp_tile:TileLoader
-			
-			for (var child_index:int = 0; child_index < this.numChildren; child_index++)
+			var numChildrends:uint = this.numChildren
+			var i:int = 0
+			var t:String;
+			var num_creates:uint = 0
+			//移动算法
+			for (var child_index:int = 0; child_index < numChildrends; child_index++)
 			{
-				if (child_index < 0)
-				{
-					child_index = 0
-				}
 				temp_tile = getChildAt(child_index) as TileLoader
 				temp_tile.x += deltaX
 				temp_tile.y += deltaY
-				temp_tile.setInformation(i + '')
-				var i:int = 0
-				var t:String
-				//向上移动
-				if (deltaY < 0 && tile_array[bound_left][bound_up].y < -outsize)
+				//temp_tile.setInformation(i + '')
+			}
+			
+			//消失和增加算法.
+			//for (child_index = 0; child_index < numChildrends; child_index++)
+			//{
+			//if (child_index < 0)
+			//{
+			//child_index = 0
+			//}
+			//
+			//}
+			//向上移动
+			if (deltaY < 0)
+			{
+				if (tile_array[bound_right][bound_bottom].y < (layer_height - map_setting.tile_size))
 				{
-					for (i = bound_left; i < bound_right; i++)
+					num_creates = Math.abs(bound_left - bound_right)
+					for (i = 0; i <= num_creates; i++)
+					{
+						temp_tile = new TileLoader
+						temp_tile.load(map_parse.getUrlByXYZ(bound_left + i, bound_bottom + 1, _z_index))
+						temp_tile.setTilePosition(bound_left + i, bound_bottom + 1, _z_index)
+						if (!tile_array[bound_left + i])
+						{
+							tile_array[bound_left + i] = {}
+						}
+						tile_array[bound_left + i][bound_bottom + 1] = temp_tile
+						temp_tile.x = tile_array[bound_left + i][bound_bottom].x
+						temp_tile.y = tile_array[bound_left][bound_bottom].y + map_setting.tile_size
+						addChild(temp_tile)
+					}
+					bound_bottom++
+				}
+				if (tile_array[bound_left][bound_up].y < -outsize)
+				{
+					for (i = bound_left; i <= bound_right; i++)
 					{
 						removeChild(tile_array[i][bound_up] as TileLoader)
 						child_index--
@@ -85,98 +115,120 @@ package com.lizeqiangd.basemap.layer
 					}
 					bound_up++
 				}
-					//
-					////向左移动
-					//if (deltaX < 0 && tile_array[bound_left][bound_up].x < -outsize)
-					//{
-					//for (t in tile_array[bound_left])
-					//{
-					//removeChild(tile_array[bound_left][t])
-					//child_index--
-					//}
-					//delete tile_array[bound_left]
-					//bound_left++
-					//}
-					//
-					////向下移动
-					//if (deltaY > 0 && tile_array[bound_right][bound_bottom].y > outsize)
-					//{
-					//for (i = bound_left; i < bound_right; i++)
-					//{
-					//removeChild(tile_array[i][bound_bottom] as TileLoader)
-					//child_index--
-					//delete tile_array[i][bound_bottom]
-					//}
-					//bound_bottom--
-					//}
-					//
-					////向右移动
-					//if (deltaX > 0 && tile_array[bound_right][bound_bottom].x > outsize)
-					//{
-					//for (t in tile_array[bound_right])
-					//{
-					//removeChild(tile_array[bound_right][t])
-					//child_index--
-					//}
-					//delete tile_array[bound_right]
-					//bound_right--
-					//}
+			}
+			
+			//向左移动
+			if (deltaX < 0)
+			{
+				if (tile_array[bound_left][bound_up].x<  (layer_width - map_setting.tile_size))
+				{
+					num_creates = Math.abs(bound_bottom - bound_up)
+					for (i = 0; i <= num_creates; i++)
+					{
+						temp_tile = new TileLoader
+						temp_tile.load(map_parse.getUrlByXYZ(bound_right + 1, bound_up + i, _z_index))
+						temp_tile.setTilePosition(bound_right + 1, bound_up + i, _z_index)
+						if (!tile_array[bound_right + 1])
+						{
+							tile_array[bound_right + 1] = {}
+						}
+						tile_array[bound_right + 1][bound_up + i] = temp_tile
+						temp_tile.x = tile_array[bound_right][bound_up].x + map_setting.tile_size
+						temp_tile.y = tile_array[bound_left][bound_up + i].y
+						addChild(temp_tile)
+					}
+					bound_right++
+				}
 				
-					//if (deltaY > 0 && tile_array[bound_right][bound_bottom].y > outsize)
-					//{
-					//for (var tl:TileLoader in tile_array[bound_up])
-					//{
-					//removeChild(tl)
-					//}
-					//delete tile_array[up_bound]
-					//}
-					//
-					//if (deltaX > 0 && tile_array[bound_right][bound_bottom].x > outsize)
-					//{
-					//for (var tl:TileLoader in tile_array[up_bound])
-					//{
-					//removeChild(tl)
-					//}
-					//delete tile_array[up_bound]
-					//}
-				
-					//if (temp_tile.x > (this.layer_width + outsize) || temp_tile.x < -outsize || temp_tile.y < -outsize || temp_tile.y > (this.layer_height + outsize))
-					//{
-					//if (this.numChildren > 1)
-					//{
-					//removeChild(temp_tile)
-					//delete tile_array[temp_tile.tile_x][temp_tile.tile_y]
-					//var bol:Boolean = false;
-					//for (var key:Object in tile_array[temp_tile.tile_x])
-					//{
-					//bol = true;
-					//}
-					//if (!bol)
-					//{
-					//delete tile_array[temp_tile.tile_x]
-					//}
-					//i--
-					//}
-					//}
-					//
-					//if (bound_right > 0 || !tile_array[temp_tile.tile_x + 1])
-					//{
-					//bound_right = temp_tile.tile_x
-					//temp_tile.setInformation('→')
-					//}
-					//
-					//if (this.layer_width > (temp_tile.x + map_setting.tile_size) && this.layer_width < (this.x + temp_tile.x + map_setting.tile_size * 2))
-					//{
-					////trace(this.x + temp_tile.x + map_setting.tile_size)
-					////tiles = new TileLoader
-					////addChild(tiles)
-					////tiles.load(map_parse.getUrlByXYZ(temp_tile.tile_x + 1, temp_tile.tile_y, temp_tile.tile_z))
-					////tiles.x = temp_tile.x + map_setting.tile_size
-					////tiles.y = temp_tile.y
-					////tiles.setTilePosition(temp_tile.tile_x + 1, temp_tile.tile_y, temp_tile.tile_z)
-					//}
+				if (tile_array[bound_left][bound_up].x < -outsize)
+				{
+					for (t in tile_array[bound_left])
+					{
+						removeChild(tile_array[bound_left][t])
+						child_index--
+					}
+					delete tile_array[bound_left]
+					bound_left++
+				}
 				
 			}
+			
+			//向下移动
+			if (deltaY > 0)
+			{
+				if (tile_array[bound_left][bound_up].y > 0)
+				{
+					num_creates = Math.abs(bound_left - bound_right)
+					for (i = 0; i <= num_creates; i++)
+					{
+						temp_tile = new TileLoader
+						temp_tile.load(map_parse.getUrlByXYZ(bound_left + i, bound_up - 1, _z_index))
+						temp_tile.setTilePosition(bound_left + i, bound_up - 1, _z_index)
+						if (!tile_array[bound_left + i])
+						{
+							tile_array[bound_left + i] = {}
+						}
+						tile_array[bound_left + i][bound_up - 1] = temp_tile
+						temp_tile.x = tile_array[bound_left + i][bound_up].x
+						temp_tile.y = tile_array[bound_left][bound_up].y - map_setting.tile_size
+						addChild(temp_tile)
+					}
+					bound_up--
+				}
+				
+				if ((tile_array[bound_right][bound_bottom].y + map_setting.tile_size) > (outsize + layer_height))
+				{
+					for (i = bound_left; i <= bound_right; i++)
+					{
+						removeChild(tile_array[i][bound_bottom] as TileLoader)
+						child_index--
+						delete tile_array[i][bound_bottom]
+					}
+					bound_bottom--
+				}
+				
+			}
+			
+			//向右移动
+			if (deltaX > 0)
+			{
+				if (tile_array[bound_left][bound_up].x > 0)
+				{
+					num_creates = Math.abs(bound_bottom - bound_up)
+					for (i = 0; i <= num_creates; i++)
+					{
+						temp_tile = new TileLoader
+						temp_tile.load(map_parse.getUrlByXYZ(bound_left - 1, bound_up + i, _z_index))
+						temp_tile.setTilePosition(bound_left - 1, bound_up + i, _z_index)
+						if (!tile_array[bound_left - 1])
+						{
+							tile_array[bound_left - 1] = {}
+						}
+						tile_array[bound_left - 1][bound_up + i] = temp_tile
+						temp_tile.x = tile_array[bound_left][bound_up].x - map_setting.tile_size
+						temp_tile.y = tile_array[bound_left][bound_up + i].y
+						addChild(temp_tile)
+					}
+					bound_left--
+				}
+				
+				if ((tile_array[bound_right][bound_bottom].x + map_setting.tile_size) > (outsize + layer_width))
+				{
+					for (t in tile_array[bound_right])
+					{
+						removeChild(tile_array[bound_right][t])
+						child_index--
+					}
+					delete tile_array[bound_right]
+					bound_right--
+				}
+				
+			}
+		
+			//添加新的瓦片
+			//tiles = new TileLoader
+		
+			//}
 		}
 		
 		public function center(lng:Number, lat:Number):void

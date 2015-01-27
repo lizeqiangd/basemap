@@ -9,8 +9,17 @@ package com.lizeqiangd.basemap
 	import flash.display.Sprite;
 	
 	/**
-	 * ...
+	 * 理论上适用于各种瓦片地图的sdk
+	 * 使用方法.使用getInstance获取本例的单例.(推荐,否则你就自己修改代码去)
+	 * var bm:BaseMap=BaseMap.getInstance
+	 * bm.config(MapSetting.getInstance)
+	 * 这里你可以设置下地图参数.需要地图类型和appkey
+	 * bm.init()
+	 * 地图就算启动完成了..
+	 * addChild(bm)
+	 *
 	 * @author Lizeqiangd
+	 * 20150127 基本构架完成
 	 */
 	public class BaseMap extends Sprite
 	{
@@ -82,68 +91,12 @@ package com.lizeqiangd.basemap
 			map_layer.center(121.13131313, 31.2323, 17);
 		}
 		
-		//
-		//public function set enableMouseWheel(value:Boolean):void
-		//{
-		//
-		//}
-		//
-		//public function set enableMouseDoubleClick(value:Boolean):void
-		//{
-		//
-		//}
-		
 		/**
-		 * 设置中心点
-		 * @param	x 纬度(x)
-		 * @param	y 经度(y)
-		 * @param	z
+		 * 同时设置宽度和高度属性.
+		 * (会立刻更新内部)
+		 * @param	w
+		 * @param	h
 		 */
-		//public function centerPoint(x:Number, y:Number, z:uint = 14):void
-		//{
-		//
-		//}
-		
-		//private function mapResize():void
-		//{
-		//mask_shape.width = mapWidth
-		//mask_shape.height = mapHeight
-		//}
-		
-		/**
-		 * 设置地图token.不同地图需要重新设置.
-		 */
-		//public function set setToken(token:String):void
-		//{
-		//mapParser.setMapToken = token
-		//}
-		//
-		//public function get MapParser():iMapUrlParser
-		//{
-		//return mapParser
-		//}
-		
-		//public function get mapHeight():Number
-		//{
-		//return _mapHeight;
-		//}
-		//
-		//public function set mapHeight(value:Number):void
-		//{
-		//_mapHeight = value;
-		//mapResize()
-		//}
-		//
-		//public function get mapWidth():Number
-		//{
-		//return _mapWidth;
-		//}
-		//
-		//public function set mapWidth(value:Number):void
-		//{
-		//_mapWidth = value;
-		//mapResize()
-		//}
 		public function setMapSize(w:Number, h:Number):void
 		{
 			_mapWidth = w
@@ -152,6 +105,10 @@ package com.lizeqiangd.basemap
 			map_layer.resize(_mapWidth, _mapHeight)
 		}
 		
+		/**
+		 * 设置地图宽度属性
+		 * (会立刻更新内部)
+		 */
 		public function set setMapWidth(value:Number):void
 		{
 			_mapWidth = value
@@ -159,6 +116,10 @@ package com.lizeqiangd.basemap
 			map_layer.resize(_mapWidth, _mapHeight)
 		}
 		
+		/**
+		 * 设置地图高度属性
+		 * (会立刻更新内部)
+		 */
 		public function set setMapHeight(value:Number):void
 		{
 			_mapHeight = value
@@ -166,16 +127,25 @@ package com.lizeqiangd.basemap
 			map_layer.resize(_mapWidth, _mapHeight)
 		}
 		
+		/**
+		 * 获取地图控制器
+		 */
 		public function get getMapController():MapController
 		{
 			return map_conroller
 		}
 		
+		/**
+		 * 获取当前地图解析器
+		 */
 		public function get getMapParser():iMapParser
 		{
 			return map_parser
 		}
 		
+		/**
+		 * 获取地图本体层.
+		 */
 		public function get getMapLayer():MapLayer
 		{
 			return map_layer

@@ -25,7 +25,7 @@ package com.lizeqiangd.basemap.parser
 			//super(MapBoxParser.Mapbox_BaseUrl);		
 		}
 		
-		public function getUrlByXYZ(_x:Number, _y:Number, _z:Number):String
+		public function getUrlByXYZ(_x:int, _y:int, _z:int):String
 		{
 			var x:uint = _x
 			var y:uint = _y
