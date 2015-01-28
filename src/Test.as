@@ -35,15 +35,17 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE
 			stage.align = StageAlign.TOP_LEFT
 			
-			MapSetting.getInstance.mapbox_token = ''
+			MapSetting.getInstance.mapbox_token = 'pk.eyJ1IjoibGl6ZXFpYW5nZCIsImEiOiJKSHZ6RHNZIn0.9BZ9QpTL3MmJXeR9biD9Sw'
 			MapSetting.getInstance.tile_outsize_count = 2
 			MapSetting.getInstance.basemap_type = 'mapbox'
-			MapSetting.getInstance.mapbox_style = ''
-			
+			MapSetting.getInstance.mapbox_style = 'lizeqiangd.09aab23b'
 			
 			bm = BaseMap.getInstance
 			bm.init();
 			addChild(bm)
+			
+			
+			bm.center(120, 30, 17);
 			
 			stage.addEventListener(Event.RESIZE, onStageResize)
 			
@@ -56,7 +58,7 @@ package
 		
 		private function onEnterFrame(e:Event):void
 		{
-			bm.getMapLayer.movement(1,1)
+			//bm.getMapLayer.movement(1,1)
 		}
 		
 		private function onStageResize(e:Event):void

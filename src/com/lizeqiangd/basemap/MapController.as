@@ -12,10 +12,7 @@ package com.lizeqiangd.basemap
 	{
 		private var map_width:Number = 100
 		private var map_height:Number = 100
-		
-		private var _mousedown_x:int
-		private var _mousedown_y:int
-		
+				
 		private var map_layer:MapLayer
 		
 		public function MapController()
@@ -32,30 +29,27 @@ package com.lizeqiangd.basemap
 			this.addEventListener(MouseEvent.MOUSE_UP, onMouseUp)
 			this.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove)
 		}
-		
+		/**
+		 * 鼠标按下后拖动操作.
+		 * @param	e
+		 */
 		private function onMouseMove(e:MouseEvent):void
 		{
 			if (e.buttonDown)
 			{
-				//e.stageX - _mousedown_x
-				//e.stageY-_mousedown_y
-				//trace(e.stageX - _mousedown_x, e.stageY - _mousedown_y)
-				map_layer.movement(e.stageX - _mousedown_x, e.stageY - _mousedown_y)
-				_mousedown_x = e.stageX
-				_mousedown_y = e.stageY
+				map_layer.movement(e.movementX, e.movementY)
 			}
 		}
 		
 		private function onMouseUp(e:MouseEvent):void
 		{
-			trace(e)
+			//trace(e)
 		}
 		
 		private function onMouseDown(e:MouseEvent):void
 		{
-			_mousedown_x = e.stageX
-			_mousedown_y = e.stageY
-			trace(e)
+			trace(e.localX , e.localY)
+			
 		}
 		
 		private function onMouseDoubleClick(e:MouseEvent):void
@@ -70,6 +64,7 @@ package com.lizeqiangd.basemap
 		 */
 		private function onMouseWheel(e:MouseEvent):void
 		{
+			//e.x
 			map_layer.scale(e.delta)
 		}
 		

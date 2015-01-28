@@ -1,6 +1,6 @@
 package com.lizeqiangd.basemap.tile
 {
-	import com.lizeqiangd.basemap.config.MapSetting;
+	//import com.lizeqiangd.basemap.config.MapSetting;
 	import com.lizeqiangd.basemap.interfaces.progressbar.pb_DefaultProgressBar;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -15,26 +15,32 @@ package com.lizeqiangd.basemap.tile
 	
 	/**
 	 * 瓦片加载器
+	 * 只负责加载瓦片,对外部库只引用进度条
 	 * @author Lizeqiangd
+	 * 20150128 移除对map_setting依赖
 	 */
 	public class TileLoader extends Sprite
 	{
-		private var loader:Loader
-		private var url:String = ''
-		private var pb:pb_DefaultProgressBar
-		private var tx:TextField
-		
-		private var tile_size:Number = 256
-		
 		public var tile_x:int = 0
 		public var tile_y:int = 0
 		public var tile_z:int = 0
 		
-		private var use_anime:Boolean = true
-		private var use_progressbar:Boolean = true
-		private var use_information:Boolean = true;
+		/**  瓦片loader **/
+		private var loader:Loader
+		/** 当前url **/
+		private var url:String = ''
+		/** 加载进度条  **/
+		private var pb:pb_DefaultProgressBar
+		/** 文本框  **/
+		private var tx:TextField
+		/** 瓦片大小 **/
+		private var tile_size:Number = 256
 		
-		public function TileLoader()
+		private var use_anime:Boolean = true
+		private var use_progressbar:Boolean =true
+		private var use_information:Boolean =true
+		
+		public function TileLoader(_tile_size:Number)
 		{
 			loader = new Loader()
 			loader.mouseChildren = false
@@ -43,7 +49,7 @@ package com.lizeqiangd.basemap.tile
 			this.mouseEnabled = false
 			this.addChild(loader)
 			
-			tile_size = MapSetting.getInstance.tile_size
+			tile_size = _tile_size
 			pb = new pb_DefaultProgressBar
 			if (use_progressbar)
 			{
@@ -54,7 +60,7 @@ package com.lizeqiangd.basemap.tile
 				tx = new TextField
 				tx.defaultTextFormat = new TextFormat('微软雅黑', 15, 0x22ccff)
 				tx.height = 25
-				tx.width = 256
+				tx.width = tile_size
 				addChild(tx)
 			}
 		}
@@ -65,7 +71,7 @@ package com.lizeqiangd.basemap.tile
 		 */
 		public function load(value:String):void
 		{
-			this.graphics.beginFill(0x22ccff)
+			this.graphics.beginFill(0x222222)
 			this.graphics.drawRect(0, 0, tile_size, tile_size)
 			this.graphics.endFill()
 			
@@ -78,7 +84,14 @@ package com.lizeqiangd.basemap.tile
 				pb.y = -pb.height / 2 + tile_size / 2
 				pb.x = -pb.width / 2 + tile_size / 2
 			}
-			loader.load(new URLRequest(url), new LoaderContext(true))
+			if (url)
+			{
+				loader.load(new URLRequest(url), new LoaderContext(true))
+			}
+			else
+			{
+				onLoadError(null)
+			}
 		}
 		
 		/**
@@ -115,6 +128,7 @@ package com.lizeqiangd.basemap.tile
 			loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress, false, 0, true)
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete)
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoadError, false, 0, true)
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.NETWORK_ERROR, onLoadError, false, 0, true)
 			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadError, false, 0, true)
 			this.addEventListener(Event.REMOVED_FROM_STAGE, onTileRemoved)
 		}

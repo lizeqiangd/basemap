@@ -14,8 +14,8 @@ package com.lizeqiangd.basemap.component
 		
 		public function LatLng(_lat:Number = 0, _lng:Number = 0)
 		{
-			latitude = lat
-			longitude = lng
+			latitude = _lat
+			longitude = _lng
 		}
 		
 		public function set x(value:Number):void

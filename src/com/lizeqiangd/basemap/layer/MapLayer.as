@@ -36,15 +36,20 @@ package com.lizeqiangd.basemap.layer
 			{
 				var tileslayer:TilesLayer = new TilesLayer(i)
 				arrTilesLayer[i] = tileslayer
-					//addChild(tileslayer)
 			}
+			addChild(getDisplayLayer)
 		}
 		
 		public function init():void
 		{
-		
+			getDisplayLayer.center(121.13131313, 31.2323)
 		}
 		
+		/**
+		 * 设置地图尺寸.并且只更新当前显示的地图.因此效率会高.
+		 * @param	w
+		 * @param	h
+		 */
 		public function resize(w:Number, h:Number):void
 		{
 			maplayer_width = w
@@ -55,81 +60,75 @@ package com.lizeqiangd.basemap.layer
 			//getDisplayLayer.scaleX = ge9tDisplayLayer.scaleY = 1
 		}
 		
+		/**
+		 * 移动地图. (只需要输入相对的X.Y
+		 * @param	delta_x
+		 * @param	detal_y
+		 */
 		public function movement(delta_x:Number, detal_y:Number):void
 		{
 			getDisplayLayer.movement(delta_x, detal_y)
-			//getDisplayLayer.x = delta_x
-			//getDisplayLayer.y = detal_y
 		}
 		
+		/**
+		 * 缩放地图.目前只有加减算法
+		 * @param	scale_step
+		 */
 		public function scale(scale_step:Number):void
 		{
-			//now_z_level += scale_step
-			//var temp_scale:Number = (now_z_index * 100 - now_z_level) / 100 + 1
-			//getDisplayLayer.scaleX = getDisplayLayer.scaleY = temp_scale
-			////放大一级
-			//if ((now_z_index * 100 - now_z_level) > 50)
-			//{
-			//removeChild(getDisplayLayer)
-			//now_z_index++
-			//getDisplayLayer.center(121.13131313, 31.2323)
-			//getDisplayLayer.resize(maplayer_width, maplayer_height)
-			//addChild(getDisplayLayer)
-			//now_z_level=now_z_index * 100
-			//}
-			////缩小一级
-			//if ((now_z_index * 100 - now_z_level) < -50)
-			//{
-			//removeChild(getDisplayLayer)
-			//now_z_index--
-			//getDisplayLayer.center(121.13131313, 31.2323)
-			//getDisplayLayer.resize(maplayer_width, maplayer_height)
-			//addChild(getDisplayLayer)
-			//now_z_level=now_z_index * 100
-			//}
-			//trace(temp_scale)
-			
+			var temp_z:int = now_z_index
 			if (scale_step > 0)
 			{
-				if (now_z_index >= map_setting.max_level)
-				{
-					now_z_index = map_setting.max_level
-					return
-				}
-				removeChild(getDisplayLayer)
-				now_z_index++;
+				temp_z++
 			}
 			if (scale_step < 0)
 			{
-				if (now_z_index == 0)
-				{
-					now_z_index = 0
-					return
-				}
-				removeChild(getDisplayLayer)
-				now_z_index--;
+				temp_z--
 			}
-			getDisplayLayer.center(121.13131313, 31.2323)
-			getDisplayLayer.resize(maplayer_width, maplayer_height)
-			addChild(getDisplayLayer)
+			showDisplayLayerZoom(temp_z)
 		
 		}
 		
+		/**
+		 * 显示居中点.
+		 * @param	lng
+		 * @param	lat
+		 * @param	z
+		 */
 		public function center(lng:Number, lat:Number, z:uint):void
 		{
-			now_z_index = z
+			showDisplayLayerZoom(z)
 			getDisplayLayer.center(lng, lat)
-			addChild(getDisplayLayer)
 		}
 		
+		/**
+		 * 获取当前显示的TileLayer
+		 */
 		public function get getDisplayLayer():TilesLayer
 		{
 			return arrTilesLayer[now_z_index]
 		}
 		
-		public function showLayer(z:uint):void
+		private function showDisplayLayerZoom(z:int):void
 		{
-		
+			if (z >= map_setting.max_level)
+			{
+				z = map_setting.max_level
+			}
+			if (z <= 0)
+			{
+				z = 0
+			}
+			if (z == now_z_index)
+			{
+				return
+			}
+			removeChild(getDisplayLayer)
+			now_z_index = z
+			addChild(getDisplayLayer)
+			
+			getDisplayLayer.center(121.13131313, 31.2323)
+			getDisplayLayer.resize(maplayer_width, maplayer_height)
 		}
 	}
 
