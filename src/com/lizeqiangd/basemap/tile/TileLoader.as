@@ -37,8 +37,8 @@ package com.lizeqiangd.basemap.tile
 		private var tile_size:Number = 256
 		
 		private var use_anime:Boolean = true
-		private var use_progressbar:Boolean =true
-		private var use_information:Boolean =true
+		private var use_progressbar:Boolean = true
+		private var use_information:Boolean = true
 		
 		public function TileLoader(_tile_size:Number)
 		{
@@ -71,13 +71,11 @@ package com.lizeqiangd.basemap.tile
 		 */
 		public function load(value:String):void
 		{
+			url = value
 			this.graphics.beginFill(0x222222)
 			this.graphics.drawRect(0, 0, tile_size, tile_size)
-			this.graphics.endFill()
-			
-			addUiListener()
-			
-			url = value
+			this.graphics.endFill()			
+			addUiListener()			
 			if (use_progressbar)
 			{
 				pb.init()
@@ -138,6 +136,7 @@ package com.lizeqiangd.basemap.tile
 			loader.contentLoaderInfo.removeEventListener(ProgressEvent.PROGRESS, onLoadProgress)
 			loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onLoadComplete)
 			loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError)
+			loader.contentLoaderInfo.removeEventListener(IOErrorEvent.NETWORK_ERROR, onLoadError)
 			loader.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadError)
 		}
 		
@@ -153,6 +152,11 @@ package com.lizeqiangd.basemap.tile
 		{
 			removeUiListener()
 			trace('Tile:LoadError:' + url)
+			if (use_information)
+			{
+				tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z + 'failed'
+				this.cacheAsBitmap = true
+			}
 		}
 		
 		private function onLoadComplete(e:Event):void

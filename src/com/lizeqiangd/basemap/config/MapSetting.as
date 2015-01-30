@@ -41,7 +41,8 @@ package com.lizeqiangd.basemap.config
 		
 		/**  瓦片的尺寸 **/
 		public var tile_size:Number = 256
-		
+		/** 地区最小显示缩放 **/
+		public var min_level:uint = 1
 		/**  地图最大显示缩放  **/
 		public var max_level:uint = Mapbox_Max_Level
 		

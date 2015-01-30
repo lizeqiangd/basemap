@@ -4,6 +4,7 @@ package
 	import com.lizeqiangd.basemap.config.MapSetting;
 	import com.lizeqiangd.basemap.parser.MapBoxParser;
 	import flash.display.Loader;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -20,6 +21,7 @@ package
 	{
 		
 		private var bm:BaseMap
+		private var center_mark:Shape
 		
 		public function Test():void
 		{
@@ -40,12 +42,19 @@ package
 			MapSetting.getInstance.basemap_type = 'mapbox'
 			MapSetting.getInstance.mapbox_style = 'lizeqiangd.09aab23b'
 			
+			center_mark = new Shape
+			center_mark.graphics.lineStyle(1, 0x22ccff)
+			center_mark.graphics.moveTo(-15, 0)
+			center_mark.graphics.lineTo(15, 0)
+			center_mark.graphics.moveTo(0, -15)
+			center_mark.graphics.lineTo(0, 15)
+			
+			
 			bm = BaseMap.getInstance
 			bm.init();
 			addChild(bm)
-			
-			
-			bm.center(120, 30, 17);
+			onStageResize(null)
+			bm.center(0,0,0);
 			
 			stage.addEventListener(Event.RESIZE, onStageResize)
 			
@@ -54,6 +63,8 @@ package
 				{
 					stage.addEventListener(Event.ENTER_FRAME, onEnterFrame)
 				}, 500)
+			
+			addChild(center_mark)
 		}
 		
 		private function onEnterFrame(e:Event):void
@@ -63,9 +74,11 @@ package
 		
 		private function onStageResize(e:Event):void
 		{
-			bm.setMapSize(stage.stageWidth, stage.stageHeight)
-			//bm.setMapHeight=stage.stageHeight
-			//bm.setMapWidth=stage.stageWidth
+			bm.x = bm.y = 30
+			bm.setMapSize(stage.stageWidth - 60, stage.stageHeight - 60)
+			//bm.g
+			center_mark.x = stage.stageHeight / 2
+			center_mark.y = stage.stageWidth / 2
 		}
 	
 	}

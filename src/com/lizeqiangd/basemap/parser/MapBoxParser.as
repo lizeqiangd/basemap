@@ -25,6 +25,13 @@ package com.lizeqiangd.basemap.parser
 			//super(MapBoxParser.Mapbox_BaseUrl);		
 		}
 		
+		/**
+		 * 根据瓦片xyz获取瓦片图片地址
+		 * @param	_x
+		 * @param	_y
+		 * @param	_z
+		 * @return
+		 */
 		public function getUrlByXYZ(_x:int, _y:int, _z:int):String
 		{
 			var x:uint = _x
@@ -33,7 +40,11 @@ package com.lizeqiangd.basemap.parser
 			var returnUrl:String = map_setting.Mapbox_BaseUrl + map_setting.mapbox_style + '/' + z + '/' + x + '/' + y + '.' + map_setting.mapbox_tiletype + '?access_token=' + map_setting.mapbox_token
 			return returnUrl
 		}
-		
+		/**
+		 * 根据latlng获取瓦片图片地址
+		 * @param	latlng
+		 * @return
+		 */
 		public function getUrlByLatlng(latlng:LatLng):String
 		{
 			var x:uint = getTileXByLng(latlng.lng)
@@ -42,7 +53,11 @@ package com.lizeqiangd.basemap.parser
 			var returnUrl:String = map_setting.Mapbox_BaseUrl + map_setting.mapbox_style + '/' + z + '/' + x + '/' + y + '.' + map_setting.mapbox_tiletype + '?access_token=' + map_setting.mapbox_token
 			return returnUrl
 		}
-		
+		/**
+		 * 根据latlng获取起始瓦片地址
+		 * @param	latlng
+		 * @return
+		 */
 		public function getStartTileByLatlng(latlng:LatLng):StartTile
 		{
 			var st:StartTile = new StartTile
@@ -117,7 +132,7 @@ package com.lizeqiangd.basemap.parser
 		 */
 		public function getLngDegreeByPixel(px:int):Number
 		{
-			return px / map_setting.Mapbox_Tile_Size / Math.pow(2, now_z) * 360 - 180
+			return 360*(px / map_setting.Mapbox_Tile_Size) / Math.pow(2, now_z)
 		}
 		
 		/**
@@ -128,7 +143,7 @@ package com.lizeqiangd.basemap.parser
 		public function getLatDegreeByPixel(px:int):Number
 		{
 			var x:Number = ((1 - px / map_setting.Mapbox_Tile_Size * 2 / Math.pow(2, now_z)) * Math.PI)
-			return Math.atan((Math.exp(x) - Math.exp(-x)) * 0.5) / Math.PI * 180
+			return (-Math.atan((Math.exp(x) - Math.exp(-x)) * 0.5) + Math.atan((Math.exp( Math.PI) - Math.exp(- Math.PI)) * 0.5)) / Math.PI * 180 
 		}
 	}
 

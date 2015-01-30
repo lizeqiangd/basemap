@@ -10,7 +10,7 @@ basemap
     //使用方法.使用getInstance获取本例的单例.(推荐,否则你就自己修改代码去)
     var bm:BaseMap=BaseMap.getInstance;
     //MapSetting里面,你可以设置下地图参数.需要地图类型和appkey
-    bm.config(MapSetting.getInstance);
+    MapSetting.getInstance.... 这里设置你需要的参数.
     //初始化地图(之后可能会改)
     bm.init();
     addChild(bm);
@@ -18,10 +18,11 @@ basemap
 ## environment
 
 - 理论上你用任何一个标准的sdk都可以跑起来...这根本没用任何恶心人的代码.
-
+- FlashDevelop + flex4.7sdk.   
+- 一切默认设置即可.
 ## demo
 
--  [DemoSite](www.lizeqiangd.com)
+-  [DemoSite](www.lizeqiangd.com/basemap)
 
 ## copyright & contact
 

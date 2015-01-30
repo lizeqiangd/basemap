@@ -77,17 +77,19 @@ package com.lizeqiangd.basemap
 			map_conroller.setMapLayer = map_layer
 			addChild(map_layer)
 			addChild(map_conroller)
-			map_layer.init()
 		}
+		
 		/**
 		 * 设置最新的中心点.
 		 * @param	lng
 		 * @param	lat
 		 * @param	zoom
 		 */
-		public function center(lng:Number , lat:Number , zoom:uint):void {
-			map_layer.center(lng, lat, zoom);			
+		public function center(lng:Number, lat:Number, zoom:uint):void
+		{
+			map_layer.center(lng, lat, zoom);
 		}
+		
 		/**
 		 * 同时设置宽度和高度属性.
 		 * (会立刻更新内部)

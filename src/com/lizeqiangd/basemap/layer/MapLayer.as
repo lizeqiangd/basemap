@@ -1,5 +1,6 @@
 package com.lizeqiangd.basemap.layer
 {
+	import com.lizeqiangd.basemap.component.LatLng;
 	import com.lizeqiangd.basemap.config.MapSetting;
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -7,6 +8,7 @@ package com.lizeqiangd.basemap.layer
 	/**
 	 * 所有层都在本层上显示
 	 * @author Lizeqiangd
+	 * 20150129 缩放交给控制器操作.本类只负责显示所需部分和获取数据
 	 */
 	public class MapLayer extends Sprite
 	{
@@ -18,7 +20,7 @@ package com.lizeqiangd.basemap.layer
 		private var maplayer_height:Number = 0
 		private var maplayer_width:Number = 0
 		
-		private var now_z_index:uint = 0
+		private var now_z_index:int =0
 		
 		public function MapLayer()
 		{
@@ -29,20 +31,16 @@ package com.lizeqiangd.basemap.layer
 			sp_mask.graphics.beginFill(0, 0)
 			sp_mask.graphics.drawRect(0, 0, 10, 10)
 			sp_mask.graphics.endFill()
-			
+			addChild(sp_mask)
 			map_setting = MapSetting.getInstance
 			
-			for (var i:uint = 0; i <= map_setting.max_level; i++)
+			for (var i:uint =0; i <= map_setting.max_level; i++)
 			{
 				var tileslayer:TilesLayer = new TilesLayer(i)
 				arrTilesLayer[i] = tileslayer
 			}
 			addChild(getDisplayLayer)
-		}
-		
-		public function init():void
-		{
-			getDisplayLayer.center(121.13131313, 31.2323)
+			getDisplayLayer.mask = sp_mask
 		}
 		
 		/**
@@ -71,22 +69,14 @@ package com.lizeqiangd.basemap.layer
 		}
 		
 		/**
-		 * 缩放地图.目前只有加减算法
-		 * @param	scale_step
+		 * 根据屏幕xy点获取该点的坐标
+		 * @param	_x
+		 * @param	_y
+		 * @return
 		 */
-		public function scale(scale_step:Number):void
+		public function getLatlngByXY(_x:Number, _y:Number):LatLng
 		{
-			var temp_z:int = now_z_index
-			if (scale_step > 0)
-			{
-				temp_z++
-			}
-			if (scale_step < 0)
-			{
-				temp_z--
-			}
-			showDisplayLayerZoom(temp_z)
-		
+			return getDisplayLayer.getLatlngByXY(_x, _y)
 		}
 		
 		/**
@@ -109,15 +99,27 @@ package com.lizeqiangd.basemap.layer
 			return arrTilesLayer[now_z_index]
 		}
 		
+		/**
+		 * 获取当前缩放
+		 */
+		public function get zoom():uint
+		{
+			return now_z_index
+		}
+		
+		/**
+		 * 显示新瓦片层,需要再调用一次center
+		 * @param	z
+		 */
 		private function showDisplayLayerZoom(z:int):void
 		{
 			if (z >= map_setting.max_level)
 			{
 				z = map_setting.max_level
 			}
-			if (z <= 0)
+			if (z <= map_setting.min_level)
 			{
-				z = 0
+				z = 1
 			}
 			if (z == now_z_index)
 			{
@@ -126,9 +128,8 @@ package com.lizeqiangd.basemap.layer
 			removeChild(getDisplayLayer)
 			now_z_index = z
 			addChild(getDisplayLayer)
-			
-			getDisplayLayer.center(121.13131313, 31.2323)
 			getDisplayLayer.resize(maplayer_width, maplayer_height)
+			getDisplayLayer.mask = sp_mask
 		}
 	}
 

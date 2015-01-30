@@ -67,28 +67,22 @@ package com.lizeqiangd.basemap.layer
 		}
 		
 		/**
-		 * 重新绘制尺寸
-		 * @param	w
-		 * @param	h
-		 */
-		public function resize(w:Number, h:Number):void
-		{
-			layer_width = w
-			layer_height = h
-			
-			num_width = Math.floor(this.layer_width / map_setting.tile_size) + 1
-			num_height = Math.floor(this.layer_height / map_setting.tile_size) + 1
-			
-			update()
-		}
-		
-		/**
 		 * 移动地图,会计算移动以及瓦块本体.
 		 * @param	deltaX
 		 * @param	deltaY
 		 */
 		public function movement(deltaX:Number, deltaY:Number):void
 		{
+			if (deltaX > map_setting.tile_size)
+			{
+				movement(map_setting.tile_size, 0)
+				return movement(deltaX - map_setting.tile_size, deltaY)
+			}
+			if (deltaY > map_setting.tile_size)
+			{
+				movement(0, map_setting.tile_size)
+				return movement(deltaX, deltaY - map_setting.tile_size)
+			}
 			
 			var outsize:int = map_setting.tile_outsize_count * map_setting.tile_size
 			var numChildrends:uint = this.numChildren
@@ -96,6 +90,7 @@ package com.lizeqiangd.basemap.layer
 			{
 				return
 			}
+			
 			var i:int = 0
 			var t:String;
 			var num_creates:uint = 0
@@ -224,11 +219,6 @@ package com.lizeqiangd.basemap.layer
 				}
 				
 			}
-		
-			//添加新的瓦片
-			//tiles = new TileLoader
-		
-			//}
 		}
 		
 		/**
@@ -239,7 +229,50 @@ package com.lizeqiangd.basemap.layer
 		public function center(lng:Number, lat:Number):void
 		{
 			map_parse.setZ(_z_index)
-			startTile = map_parse.getStartTileByLatlng(new LatLng(lat, lng))
+			var ll:LatLng = new LatLng(lat, lng)
+			//trace(this.map_parse.getLatDegreeByPixel(layer_height / 2))
+			//trace(this.map_parse.getLngDegreeByPixel(layer_width / 2))
+			//ll.lat += this.map_parse.getLatDegreeByPixel(layer_height / 2)
+			//ll.lng -= this.map_parse.getLngDegreeByPixel(layer_width / 2)
+			startTile = map_parse.getStartTileByLatlng(ll)
+			startTile.offsetX += layer_width / 2
+			startTile.offsetY += layer_height / 2
+			update()
+		}
+		
+		/**
+		 * 根据屏幕xy点获取该点的坐标
+		 * @param	_x
+		 * @param	_y
+		 * @return
+		 */
+		public function getLatlngByXY(_x:Number, _y:Number):LatLng
+		{
+			var ll:LatLng = new LatLng()
+			ll.lng = startTile.lng + map_parse.getLngDegreeByPixel(_x - total_movement_x)
+			ll.lat = startTile.lat + map_parse.getLatDegreeByPixel(_y - total_movement_y)
+			trace(total_movement_x,total_movement_y)
+			trace(ll)
+			return ll
+		}
+		
+		/**
+		 * 重新绘制尺寸
+		 * @param	w
+		 * @param	h
+		 */
+		public function resize(w:Number, h:Number):void
+		{
+			layer_width = w
+			layer_height = h
+			
+			num_width = Math.floor(this.layer_width / map_setting.tile_size) + 1
+			num_height = Math.floor(this.layer_height / map_setting.tile_size) + 1
+			if (startTile)
+			{
+				
+			}
+			update()
 		}
 		
 		/**
@@ -247,17 +280,14 @@ package com.lizeqiangd.basemap.layer
 		 */
 		private function update():void
 		{
-			clear()
 			if (!startTile)
 			{
 				return
 			}
+			clear()
 			map_parse.setZ(_z_index)
 			var centerTileX:int = startTile.tileX
-			//map_parse.getTileXByLng(121.5068837) //- num_width / 2
-			var centerTileY:int = startTile.tileY
-			//map_parse.getTileYByLat(31.2362685) //- num_height / 2
-			
+			var centerTileY:int = startTile.tileY			
 			bound_up = centerTileY
 			bound_bottom = centerTileY + num_height - 1
 			bound_left = centerTileX
@@ -273,8 +303,7 @@ package com.lizeqiangd.basemap.layer
 					_tileLoader.y = map_setting.tile_size * i
 				}
 			}
-			movement(startTile.offsetX, startTile.offsetY)
-		
+			movement(startTile.offsetX, startTile.offsetY)		
 		}
 		
 		/**
@@ -301,8 +330,7 @@ package com.lizeqiangd.basemap.layer
 		
 		private function calculateLatlng():void
 		{
-			map_setting.now_map_bound_up=startTile.lat+
-			map_setting.now_map_bound_down
+			map_setting.now_map_bound_up = startTile.lat + map_setting.now_map_bound_down
 			map_setting.now_map_bound_left
 			map_setting.now_map_bound_right
 		}

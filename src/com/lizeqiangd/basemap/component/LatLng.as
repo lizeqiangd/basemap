@@ -16,11 +16,13 @@ package com.lizeqiangd.basemap.component
 		{
 			latitude = _lat
 			longitude = _lng
+			adjustDegree()
 		}
 		
 		public function set x(value:Number):void
 		{
 			longitude = value
+			adjustDegree()
 		}
 		
 		public function get x():Number
@@ -31,6 +33,7 @@ package com.lizeqiangd.basemap.component
 		public function set y(value:Number):void
 		{
 			latitude = value
+			adjustDegree()
 		}
 		
 		public function get y():Number
@@ -41,6 +44,7 @@ package com.lizeqiangd.basemap.component
 		public function set lng(value:Number):void
 		{
 			longitude = value
+			adjustDegree()
 		}
 		
 		public function get lng():Number
@@ -51,6 +55,7 @@ package com.lizeqiangd.basemap.component
 		public function set lat(value:Number):void
 		{
 			latitude = value
+			adjustDegree()
 		}
 		
 		public function get lat():Number
@@ -61,6 +66,12 @@ package com.lizeqiangd.basemap.component
 		public function toString():String
 		{
 			return 'longitude:' + lng + ' latitude:' + lat
+		}
+		
+		private function adjustDegree():void
+		{
+			latitude = latitude % 180
+			longitude = longitude % 360
 		}
 	}
 

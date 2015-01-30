@@ -1,5 +1,6 @@
 package com.lizeqiangd.basemap
 {
+	import com.lizeqiangd.basemap.component.LatLng;
 	import com.lizeqiangd.basemap.layer.MapLayer;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -12,8 +13,11 @@ package com.lizeqiangd.basemap
 	{
 		private var map_width:Number = 100
 		private var map_height:Number = 100
-				
+		
 		private var map_layer:MapLayer
+		
+		private var mouse_down_x:int = 0
+		private var mouse_down_y:int = 0
 		
 		public function MapController()
 		{
@@ -29,6 +33,7 @@ package com.lizeqiangd.basemap
 			this.addEventListener(MouseEvent.MOUSE_UP, onMouseUp)
 			this.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove)
 		}
+		
 		/**
 		 * 鼠标按下后拖动操作.
 		 * @param	e
@@ -37,7 +42,9 @@ package com.lizeqiangd.basemap
 		{
 			if (e.buttonDown)
 			{
-				map_layer.movement(e.movementX, e.movementY)
+				map_layer.movement(e.localX - mouse_down_x, e.localY - mouse_down_y)
+				mouse_down_x = e.localX
+				mouse_down_y = e.localY
 			}
 		}
 		
@@ -48,8 +55,10 @@ package com.lizeqiangd.basemap
 		
 		private function onMouseDown(e:MouseEvent):void
 		{
-			trace(e.localX , e.localY)
-			
+			mouse_down_x = e.localX
+			mouse_down_y = e.localY
+			map_layer.getLatlngByXY(mouse_down_x, mouse_down_y)
+			//trace(map_layer.getLatlngByXY(mouse_down_x, mouse_down_y))
 		}
 		
 		private function onMouseDoubleClick(e:MouseEvent):void
@@ -57,15 +66,25 @@ package com.lizeqiangd.basemap
 			//trace(e)
 		
 		}
+		
 		/**
 		 * 鼠标滚轮操作
-		 * 往下滚是负 
+		 * 往下滚是负
 		 * @param	e
 		 */
 		private function onMouseWheel(e:MouseEvent):void
 		{
-			//e.x
-			map_layer.scale(e.delta)
+			var temp_z:int = map_layer.zoom
+			if (e.delta > 0)
+			{
+				temp_z++
+			}
+			if (e.delta < 0)
+			{
+				temp_z--
+			}
+			var ll:LatLng = map_layer.getLatlngByXY(e.localX,  e.localY)
+			map_layer.center(0,0, temp_z)
 		}
 		
 		private function onMouseClick(e:MouseEvent):void
@@ -93,10 +112,10 @@ package com.lizeqiangd.basemap
 			this.graphics.drawRect(0, 0, map_width, map_height)
 			this.graphics.endFill()
 			
-			if (true)
+			if (false)
 			{
-				//this.graphics.beginFill(0xff9900, 0.3)
-				//this.graphics.drawRect(0, 0, map_width, map_height)
+				this.graphics.beginFill(0xff9900, 0.3)
+				this.graphics.drawRect(0, 0, map_width, map_height)
 			}
 		}
 	}
