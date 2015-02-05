@@ -127,23 +127,25 @@ package com.lizeqiangd.basemap.parser
 		
 		/**
 		 * 根据像素数获取经度数值
+		 * 不可用
 		 * @param	px
 		 * @return
 		 */
 		public function getLngDegreeByPixel(px:int):Number
 		{
-			return 360*(px / map_setting.Mapbox_Tile_Size) / Math.pow(2, now_z)
+			return 0//360*(px / map_setting.Mapbox_Tile_Size) / Math.pow(2, now_z)
 		}
 		
 		/**
 		 * 根据像素数获取纬度数值
+		 * 不可用
 		 * @param	px
 		 * @return
 		 */
 		public function getLatDegreeByPixel(px:int):Number
 		{
 			var x:Number = ((1 - px / map_setting.Mapbox_Tile_Size * 2 / Math.pow(2, now_z)) * Math.PI)
-			return (-Math.atan((Math.exp(x) - Math.exp(-x)) * 0.5) + Math.atan((Math.exp( Math.PI) - Math.exp(- Math.PI)) * 0.5)) / Math.PI * 180 
+			return 0//(-Math.atan((Math.exp(x) - Math.exp(-x)) * 0.5) + Math.atan((Math.exp( Math.PI) - Math.exp(- Math.PI)) * 0.5)) / Math.PI * 180 
 		}
 	}
 

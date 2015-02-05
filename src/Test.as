@@ -49,12 +49,11 @@ package
 			center_mark.graphics.moveTo(0, -15)
 			center_mark.graphics.lineTo(0, 15)
 			
-			
 			bm = BaseMap.getInstance
 			bm.init();
 			addChild(bm)
 			onStageResize(null)
-			bm.center(0,0,0);
+			bm.center(0, 0, 2);
 			
 			stage.addEventListener(Event.RESIZE, onStageResize)
 			
@@ -77,8 +76,8 @@ package
 			bm.x = bm.y = 30
 			bm.setMapSize(stage.stageWidth - 60, stage.stageHeight - 60)
 			//bm.g
-			center_mark.x = stage.stageHeight / 2
-			center_mark.y = stage.stageWidth / 2
+			center_mark.x = stage.stageWidth  / 2
+			center_mark.y = stage.stageHeight/ 2
 		}
 	
 	}

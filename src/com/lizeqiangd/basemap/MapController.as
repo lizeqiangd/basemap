@@ -58,7 +58,6 @@ package com.lizeqiangd.basemap
 			mouse_down_x = e.localX
 			mouse_down_y = e.localY
 			map_layer.getLatlngByXY(mouse_down_x, mouse_down_y)
-			//trace(map_layer.getLatlngByXY(mouse_down_x, mouse_down_y))
 		}
 		
 		private function onMouseDoubleClick(e:MouseEvent):void
@@ -74,7 +73,10 @@ package com.lizeqiangd.basemap
 		 */
 		private function onMouseWheel(e:MouseEvent):void
 		{
+			mouse_down_x = e.localX
+			mouse_down_y = e.localY
 			var temp_z:int = map_layer.zoom
+			var ll:LatLng = map_layer.getLatlngByXY(mouse_down_x, mouse_down_y)
 			if (e.delta > 0)
 			{
 				temp_z++
@@ -83,8 +85,7 @@ package com.lizeqiangd.basemap
 			{
 				temp_z--
 			}
-			var ll:LatLng = map_layer.getLatlngByXY(e.localX,  e.localY)
-			map_layer.center(0,0, temp_z)
+			map_layer.center(ll.lng,ll.lat,temp_z)
 		}
 		
 		private function onMouseClick(e:MouseEvent):void
