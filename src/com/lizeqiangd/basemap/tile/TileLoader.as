@@ -40,7 +40,8 @@ package com.lizeqiangd.basemap.tile
 		private var use_progressbar:Boolean = true
 		private var use_information:Boolean = true
 		
-		private var use_debug:Boolean =true
+		private var use_debug:Boolean = true
+		
 		public function TileLoader(_tile_size:Number)
 		{
 			loader = new Loader()
@@ -49,7 +50,7 @@ package com.lizeqiangd.basemap.tile
 			this.mouseChildren = false
 			this.mouseEnabled = false
 			this.addChild(loader)
-						
+			
 			tile_size = _tile_size
 			pb = new pb_DefaultProgressBar
 			if (use_progressbar)
@@ -75,15 +76,16 @@ package com.lizeqiangd.basemap.tile
 			url = value
 			this.graphics.beginFill(0x222222)
 			this.graphics.drawRect(0, 0, tile_size, tile_size)
-			this.graphics.endFill()			
+			this.graphics.endFill()
 			
-			if (use_debug) {
+			if (use_debug)
+			{
 				this.graphics.lineStyle(1, 0xffffff)
 				this.graphics.drawRect(0, 0, tile_size, tile_size)
-				loader.alpha=0.5
+				loader.alpha = 0.5
 			}
 			
-			addUiListener()			
+			addUiListener()
 			if (use_progressbar)
 			{
 				pb.init()
@@ -172,7 +174,7 @@ package com.lizeqiangd.basemap.tile
 			removeUiListener()
 			if (use_anime)
 			{
-				use_debug?null:loader.alpha =0
+				use_debug ? null : loader.alpha = 0
 				this.addEventListener(Event.ENTER_FRAME, onEnterFrameAnime);
 			}
 			else
@@ -188,7 +190,7 @@ package com.lizeqiangd.basemap.tile
 		
 		private function onEnterFrameAnime(e:Event):void
 		{
-		use_debug?null:	loader.alpha += 0.2
+			use_debug ? null : loader.alpha += 0.2
 			if (use_progressbar)
 			{
 				pb.alpha -= 0.2

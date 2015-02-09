@@ -15,6 +15,7 @@ package com.lizeqiangd.basemap.layer
 	 * 包含瓦片移动算法,增加移除算法.
 	 * @author Lizeqiangd
 	 * 20150128 对tileloader赋瓦片大小.复用代码优化流程.删除
+	 * 20150209 重新建立计算鼠标点位置函数.之前的想复杂了
 	 */
 	
 	public class TilesLayer extends Sprite
@@ -230,10 +231,6 @@ package com.lizeqiangd.basemap.layer
 		{
 			map_parse.setZ(_z_index)
 			var ll:LatLng = new LatLng(lat, lng)
-			//trace(this.map_parse.getLatDegreeByPixel(layer_height / 2))
-			//trace(this.map_parse.getLngDegreeByPixel(layer_width / 2))
-			//ll.lat += this.map_parse.getLatDegreeByPixel(layer_height / 2)
-			//ll.lng -= this.map_parse.getLngDegreeByPixel(layer_width / 2)
 			startTile = map_parse.getStartTileByLatlng(ll)
 			startTile.offsetX += layer_width / 2
 			startTile.offsetY += layer_height / 2
@@ -243,6 +240,7 @@ package com.lizeqiangd.basemap.layer
 		
 		/**
 		 * 根据屏幕xy点获取该点的坐标
+		 * 该算法是差不多算法.很烂.
 		 * @param	_x
 		 * @param	_y
 		 * @return
@@ -250,63 +248,73 @@ package com.lizeqiangd.basemap.layer
 		public function getLatlngByXY(_x:Number, _y:Number):LatLng
 		{
 			var ll:LatLng = new LatLng()
-			ll.lng = startTile.lng + 360 * ((_x - total_movement_x) / map_setting.Mapbox_Tile_Size) / Math.pow(2, _z_index)
-			//ll.lat = startTile.lat + map_parse.getLatDegreeByPixel(_y - total_movement_y)
-			var target_delta_tile_y:Number = ((_y - total_movement_y) / map_setting.tile_size)
-			var integer_tile_y:int
-			var float_tile_y:Number
-			var delta_tile_lat:Number = 0
-			map_parse.setZ(_z_index)
-			//原点之下
-			if (target_delta_tile_y > 0)
-			{
-				//target_delta_tile_y = ((_y - total_movement_y) / map_setting.tile_size) //2.65
-				integer_tile_y = Math.floor(target_delta_tile_y) //2
-				float_tile_y = target_delta_tile_y - integer_tile_y //0.65
-				//south pole
-				if (startTile.tileY + integer_tile_y >= Math.pow(2, _z_index - 1))
-				{
-					delta_tile_lat = -map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1) + map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
-					ll.lat = -(delta_tile_lat * float_tile_y + map_parse.getLatByTileY(startTile.tileY + integer_tile_y))
-					trace(1)
-				}
-				//north pole
-				else
-				{
-					delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y - 1) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
-					ll.lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - delta_tile_lat * float_tile_y
-					trace(2)
-					
-				}
-			}
-			//原点之上
-			else if (target_delta_tile_y < 0)
-			{
-				//target_delta_tile_y = ((_y - total_movement_y) / map_setting.tile_size) //-2.65
-				integer_tile_y = Math.floor(target_delta_tile_y) //-3
-				float_tile_y = target_delta_tile_y - integer_tile_y //0.45
-				//south pole
-				if (startTile.tileY + integer_tile_y >= Math.pow(2, _z_index - 1))
-				{
-					delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
-					ll.lat = -(delta_tile_lat * float_tile_y + map_parse.getLatByTileY(startTile.tileY + integer_tile_y))
-					trace(3)
-				}
-				//north pole
-				else
-				{
-					delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1);
-					ll.lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - delta_tile_lat * float_tile_y
-					trace(4)
-				}
-			}
-			else
-			{
-				ll.lat = startTile.lat
-			}
-			trace(startTile)
-			trace('movement.x:', total_movement_x, 'movement.y:', total_movement_y)
-			trace(ll)
+			ll.lng = startTile.lng + 360 * ((_x - total_movement_x) / map_setting.Mapbox_Tile_Size) / Math.pow(2, _z_index)			
+			var delta_tileY:Number =(_y-total_movement_y)/ map_setting.Mapbox_Tile_Size
+			var down_tile_lat:Number =map_parse.getLatByTileY(Math.floor((_y-total_movement_y)/ map_setting.Mapbox_Tile_Size)+startTile.tileY+1)
+			var up_tile_lat:Number =map_parse.getLatByTileY(Math.floor((_y-total_movement_y)/ map_setting.Mapbox_Tile_Size)+startTile.tileY)
+			var delta_tile_lat:Number = up_tile_lat -down_tile_lat			
+			ll.lat=up_tile_lat-(delta_tileY+Math.pow(2, _z_index))%1*delta_tile_lat
+			//
+			
+			
+			
+			
+			
+			////ll.lat = startTile.lat + map_parse.getLatDegreeByPixel(_y - total_movement_y)
+			//var target_delta_tile_y:Number = ((_y - total_movement_y) / map_setting.tile_size)
+			//var integer_tile_y:int
+			//var float_tile_y:Number
+			//map_parse.setZ(_z_index)
+			////原点之下
+			//if (target_delta_tile_y > 0)
+			//{
+				////target_delta_tile_y = ((_y - total_movement_y) / map_setting.tile_size) //2.65
+				//integer_tile_y = Math.floor(target_delta_tile_y) //2
+				//float_tile_y = target_delta_tile_y - integer_tile_y //0.65
+				////south pole
+				//if (startTile.tileY + integer_tile_y >= Math.pow(2, _z_index - 1))
+				//{
+					//delta_tile_lat = -map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1) + map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
+					//ll.lat = -(delta_tile_lat * float_tile_y + map_parse.getLatByTileY(startTile.tileY + integer_tile_y))
+					//trace(1)
+				//}
+				////north pole
+				//else
+				//{
+					//delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y - 1) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
+					//ll.lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - delta_tile_lat * float_tile_y
+					//trace(2)
+					//
+				//}
+			//}
+			////原点之上
+			//else if (target_delta_tile_y < 0)
+			//{
+				////target_delta_tile_y = ((_y - total_movement_y) / map_setting.tile_size) //-2.65
+				//integer_tile_y = Math.floor(target_delta_tile_y) //-3
+				//float_tile_y = target_delta_tile_y - integer_tile_y //0.45
+				////south pole
+				//if (startTile.tileY + integer_tile_y >= Math.pow(2, _z_index - 1))
+				//{
+					//delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
+					//ll.lat = -(delta_tile_lat * float_tile_y + map_parse.getLatByTileY(startTile.tileY + integer_tile_y))
+					//trace(3)
+				//}
+				////north pole
+				//else
+				//{
+					//delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1);
+					//ll.lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - delta_tile_lat * float_tile_y
+					//trace(4)
+				//}
+			//}
+			//else
+			//{
+				//ll.lat = startTile.lat
+			//}
+			//trace(startTile)
+			//trace('movement.x:', total_movement_x, 'movement.y:', total_movement_y)
+			//trace(ll)
 			return ll
 		}
 		
