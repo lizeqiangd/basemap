@@ -38,9 +38,9 @@ package com.lizeqiangd.basemap.tile
 		
 		private var use_anime:Boolean = true
 		private var use_progressbar:Boolean = true
-		private var use_information:Boolean = true
+		private var use_information:Boolean = false
 		
-		private var use_debug:Boolean = true
+		private var use_debug:Boolean = false
 		
 		public function TileLoader(_tile_size:Number)
 		{

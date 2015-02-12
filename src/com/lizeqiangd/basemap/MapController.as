@@ -77,6 +77,7 @@ package com.lizeqiangd.basemap
 			mouse_down_y = e.localY
 			var temp_z:int = map_layer.zoom
 			var ll:LatLng = map_layer.getLatlngByXY(mouse_down_x, mouse_down_y)
+			//trace(ll)
 			if (e.delta > 0)
 			{
 				temp_z++

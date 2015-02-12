@@ -53,8 +53,8 @@ package
 			bm.init();
 			addChild(bm)
 			onStageResize(null)
-			bm.center(0, 0, 2);
-			
+			bm.center(113.932663669586175,22.534340149642382, 15);
+			//shenzhen
 			stage.addEventListener(Event.RESIZE, onStageResize)
 			
 			setTimeout(onStageResize, 100, null)

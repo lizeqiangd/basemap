@@ -234,8 +234,8 @@ package com.lizeqiangd.basemap.layer
 			startTile = map_parse.getStartTileByLatlng(ll)
 			startTile.offsetX += layer_width / 2
 			startTile.offsetY += layer_height / 2
-			trace(startTile)
 			update()
+			//movement(layer_width / 2 + startTile.offsetX, layer_height / 2 + startTile.offsetY)
 		}
 		
 		/**
@@ -248,73 +248,15 @@ package com.lizeqiangd.basemap.layer
 		public function getLatlngByXY(_x:Number, _y:Number):LatLng
 		{
 			var ll:LatLng = new LatLng()
-			ll.lng = startTile.lng + 360 * ((_x - total_movement_x) / map_setting.Mapbox_Tile_Size) / Math.pow(2, _z_index)			
-			var delta_tileY:Number =(_y-total_movement_y)/ map_setting.Mapbox_Tile_Size
-			var down_tile_lat:Number =map_parse.getLatByTileY(Math.floor((_y-total_movement_y)/ map_setting.Mapbox_Tile_Size)+startTile.tileY+1)
-			var up_tile_lat:Number =map_parse.getLatByTileY(Math.floor((_y-total_movement_y)/ map_setting.Mapbox_Tile_Size)+startTile.tileY)
-			var delta_tile_lat:Number = up_tile_lat -down_tile_lat			
-			ll.lat=up_tile_lat-(delta_tileY+Math.pow(2, _z_index))%1*delta_tile_lat
-			//
-			
-			
-			
-			
-			
-			////ll.lat = startTile.lat + map_parse.getLatDegreeByPixel(_y - total_movement_y)
-			//var target_delta_tile_y:Number = ((_y - total_movement_y) / map_setting.tile_size)
-			//var integer_tile_y:int
-			//var float_tile_y:Number
-			//map_parse.setZ(_z_index)
-			////原点之下
-			//if (target_delta_tile_y > 0)
-			//{
-				////target_delta_tile_y = ((_y - total_movement_y) / map_setting.tile_size) //2.65
-				//integer_tile_y = Math.floor(target_delta_tile_y) //2
-				//float_tile_y = target_delta_tile_y - integer_tile_y //0.65
-				////south pole
-				//if (startTile.tileY + integer_tile_y >= Math.pow(2, _z_index - 1))
-				//{
-					//delta_tile_lat = -map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1) + map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
-					//ll.lat = -(delta_tile_lat * float_tile_y + map_parse.getLatByTileY(startTile.tileY + integer_tile_y))
-					//trace(1)
-				//}
-				////north pole
-				//else
-				//{
-					//delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y - 1) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
-					//ll.lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - delta_tile_lat * float_tile_y
-					//trace(2)
-					//
-				//}
-			//}
-			////原点之上
-			//else if (target_delta_tile_y < 0)
-			//{
-				////target_delta_tile_y = ((_y - total_movement_y) / map_setting.tile_size) //-2.65
-				//integer_tile_y = Math.floor(target_delta_tile_y) //-3
-				//float_tile_y = target_delta_tile_y - integer_tile_y //0.45
-				////south pole
-				//if (startTile.tileY + integer_tile_y >= Math.pow(2, _z_index - 1))
-				//{
-					//delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y);
-					//ll.lat = -(delta_tile_lat * float_tile_y + map_parse.getLatByTileY(startTile.tileY + integer_tile_y))
-					//trace(3)
-				//}
-				////north pole
-				//else
-				//{
-					//delta_tile_lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - map_parse.getLatByTileY(startTile.tileY + integer_tile_y + 1);
-					//ll.lat = map_parse.getLatByTileY(startTile.tileY + integer_tile_y) - delta_tile_lat * float_tile_y
-					//trace(4)
-				//}
-			//}
-			//else
-			//{
-				//ll.lat = startTile.lat
-			//}
+			var delta_tileY:Number = (_y - total_movement_y) / map_setting.Mapbox_Tile_Size
+			var down_tile_lat:Number = map_parse.getLatByTileY(Math.floor((_y - total_movement_y) / map_setting.Mapbox_Tile_Size) + startTile.tileY + 1)
+			var up_tile_lat:Number = map_parse.getLatByTileY(Math.floor((_y - total_movement_y) / map_setting.Mapbox_Tile_Size) + startTile.tileY)
+			var delta_tile_lat:Number = up_tile_lat - down_tile_lat
+			ll.lng = startTile.lng + 360 * ((_x + startTile.offsetX - layer_width / 2 - total_movement_x) / map_setting.Mapbox_Tile_Size) / Math.pow(2, _z_index)
+			ll.lat = up_tile_lat - (delta_tileY + Math.pow(2, _z_index)) % 1 * delta_tile_lat
 			//trace(startTile)
-			//trace('movement.x:', total_movement_x, 'movement.y:', total_movement_y)
-			//trace(ll)
+			//trace(total_movement_x, total_movement_y)
+			trace(ll)
 			return ll
 		}
 		
@@ -357,7 +299,6 @@ package com.lizeqiangd.basemap.layer
 			
 			for (var i:int = 0; i < num_height; i++)
 			{
-				//tile_array[centerTileX] = {}
 				for (var k:int = 0; k < num_width; k++)
 				{
 					createTiles(centerTileX + k, i + centerTileY)

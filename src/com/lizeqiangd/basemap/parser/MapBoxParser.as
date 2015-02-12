@@ -40,6 +40,7 @@ package com.lizeqiangd.basemap.parser
 			var returnUrl:String = map_setting.Mapbox_BaseUrl + map_setting.mapbox_style + '/' + z + '/' + x + '/' + y + '.' + map_setting.mapbox_tiletype + '?access_token=' + map_setting.mapbox_token
 			return returnUrl
 		}
+		
 		/**
 		 * 根据latlng获取瓦片图片地址
 		 * @param	latlng
@@ -53,8 +54,14 @@ package com.lizeqiangd.basemap.parser
 			var returnUrl:String = map_setting.Mapbox_BaseUrl + map_setting.mapbox_style + '/' + z + '/' + x + '/' + y + '.' + map_setting.mapbox_tiletype + '?access_token=' + map_setting.mapbox_token
 			return returnUrl
 		}
+		
 		/**
 		 * 根据latlng获取起始瓦片地址
+		 * 1.用给的latlng计算出该坐标所在的瓦片坐标 tileXY
+		 * 2.计算出瓦片坐标的小数部分用于位移
+		 * 3.瓦片小数部分乘以瓦片大小得出位移数.
+		 * 4.返回StartTile
+		 * 
 		 * @param	latlng
 		 * @return
 		 */
@@ -66,11 +73,23 @@ package com.lizeqiangd.basemap.parser
 			var n:int = Math.pow(2, now_z)
 			st.tileX = getTileXByLng(latlng.lng)
 			st.tileY = getTileYByLat(latlng.lat)
-			var lon_deg:Number = getLngByTileX(st.tileX) // / n * 360.0 - 180.0
-			var lat_deg:Number = getLatByTileY(st.tileY) //Math.atan(Math.sin(Math.PI * (1 - 2 * st.tileY / n))) / Math.PI * 180
+			//var lon_deg:Number = getLngByTileX(st.tileX) // / n * 360.0 - 180.0
+			//var lat_deg:Number = getLatByTileY(st.tileY) //Math.atan(Math.sin(Math.PI * (1 - 2 * st.tileY / n))) / Math.PI * 180
+			
+			var delta_tileX_movement:Number = ((latlng.lng +180) / 360.0 * n) % 1
+			var delta_tileY_movement:Number = ((1.0 - Math.log(Math.tan(latlng.lat / 180 * Math.PI) + (1.0 / Math.cos(latlng.lat / 180 * Math.PI))) / Math.PI) / 2.0 * n) % 1
+
+			//var ll:LatLng = new LatLng()
+			//ll.lng = startTile.lng + 360 * ((_x - total_movement_x) / map_setting.Mapbox_Tile_Size) / Math.pow(2, _z_index)			
+			//var delta_tileY:Number =(_y-total_movement_y)/ map_setting.Mapbox_Tile_Size
+			//var down_tile_lat:Number =map_parse.getLatByTileY(Math.floor((_y-total_movement_y)/ map_setting.Mapbox_Tile_Size)+startTile.tileY+1)
+			//var up_tile_lat:Number =map_parse.getLatByTileY(Math.floor((_y-total_movement_y)/ map_setting.Mapbox_Tile_Size)+startTile.tileY)
+			//var delta_tile_lat:Number = up_tile_lat -down_tile_lat			
+			//ll.lat=up_tile_lat-(delta_tileY+Math.pow(2, _z_index))%1*delta_tile_lat
 			var tile_size:Number = MapSetting.getInstance.Mapbox_Tile_Size
-			st.offsetX = (lon_deg - st.lng) * (tile_size * n) / 360
-			st.offsetY = -(lat_deg - st.lat) * (tile_size * n) / 170.1022
+			//(lng + 180.0) / 360.0 *n
+			st.offsetX = -delta_tileX_movement * tile_size
+			st.offsetY = -delta_tileY_movement * tile_size
 			return st
 		}
 		
@@ -133,7 +152,7 @@ package com.lizeqiangd.basemap.parser
 		 */
 		public function getLngDegreeByPixel(px:int):Number
 		{
-			return 0//360*(px / map_setting.Mapbox_Tile_Size) / Math.pow(2, now_z)
+			return 0 //360*(px / map_setting.Mapbox_Tile_Size) / Math.pow(2, now_z)
 		}
 		
 		/**
@@ -145,7 +164,7 @@ package com.lizeqiangd.basemap.parser
 		public function getLatDegreeByPixel(px:int):Number
 		{
 			var x:Number = ((1 - px / map_setting.Mapbox_Tile_Size * 2 / Math.pow(2, now_z)) * Math.PI)
-			return 0//(-Math.atan((Math.exp(x) - Math.exp(-x)) * 0.5) + Math.atan((Math.exp( Math.PI) - Math.exp(- Math.PI)) * 0.5)) / Math.PI * 180 
+			return 0 //(-Math.atan((Math.exp(x) - Math.exp(-x)) * 0.5) + Math.atan((Math.exp( Math.PI) - Math.exp(- Math.PI)) * 0.5)) / Math.PI * 180 
 		}
 	}
 
