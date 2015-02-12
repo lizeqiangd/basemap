@@ -5,7 +5,7 @@ basemap
 - basemap是一个基于纯as3语言制作的瓦片地图.通过设置使用的地图和相应的appkey以及设置.可以使用理论上所有基于瓦片的地图.(目前只开发mapbox模块)
 - 因为万恶的谷歌不提供googlemap for flash sdk了.
 
-## how to use 如何使用
+## how to use 如何使用 (need to update)
 
     //使用方法.使用getInstance获取本例的单例.(推荐,否则你就自己修改代码去)
     var bm:BaseMap=BaseMap.getInstance;
@@ -20,9 +20,10 @@ basemap
 - 理论上你用任何一个标准的sdk都可以跑起来...这根本没用任何恶心人的代码.
 - FlashDevelop + flex4.7sdk.   
 - 一切默认设置即可.
+
 ## demo
 
--  [DemoSite](www.lizeqiangd.com/basemap)
+-  [DemoSite](http://www.lizeqiangd.com/basemap)
 
 ## copyright & contact
 
