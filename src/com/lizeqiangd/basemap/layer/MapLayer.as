@@ -2,8 +2,12 @@ package com.lizeqiangd.basemap.layer
 {
 	import com.lizeqiangd.basemap.component.LatLng;
 	import com.lizeqiangd.basemap.config.MapSetting;
+	import com.lizeqiangd.basemap.evnets.TileEvent;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.utils.setTimeout;
 	
 	/**
 	 * 所有层都在本层上显示
@@ -12,15 +16,23 @@ package com.lizeqiangd.basemap.layer
 	 */
 	public class MapLayer extends Sprite
 	{
+		//地图设置.
 		private var map_setting:MapSetting
 		
+		//全部瓦片层的集合
 		private var arrTilesLayer:Vector.<TilesLayer>
+		//统一的遮罩
 		private var sp_mask:Shape
 		
-		private var maplayer_height:Number = 0
-		private var maplayer_width:Number = 0
+		//地图的大小
+		private var maplayer_height:Number = 1
+		private var maplayer_width:Number = 1
 		
-		private var now_z_index:int =0
+		//当前显示的z轴
+		private var now_z_index:int = 0
+		
+		//当前缩放动画用图片
+		private var zoom_anime_image:Bitmap
 		
 		public function MapLayer()
 		{
@@ -34,9 +46,15 @@ package com.lizeqiangd.basemap.layer
 			addChild(sp_mask)
 			map_setting = MapSetting.getInstance
 			
-			for (var i:uint =0; i <= map_setting.max_level; i++)
+			zoom_anime_image = new Bitmap
+			zoom_anime_image.alpha = .8
+			zoom_anime_image.bitmapData = new BitmapData(maplayer_width, maplayer_height)
+			addChild(zoom_anime_image)
+			zoom_anime_image.name = 'zoom_anime_image'
+			for (var i:uint = 0; i <= map_setting.max_level; i++)
 			{
 				var tileslayer:TilesLayer = new TilesLayer(i)
+				tileslayer.addEventListener(TileEvent.TILELAYER_LOAD_COMPLETE, onTileLoadComplete)
 				arrTilesLayer[i] = tileslayer
 			}
 			addChild(getDisplayLayer)
@@ -55,11 +73,13 @@ package com.lizeqiangd.basemap.layer
 			sp_mask.width = maplayer_width
 			sp_mask.height = maplayer_height
 			getDisplayLayer.resize(maplayer_width, maplayer_height)
+			zoom_anime_image.bitmapData.dispose()
+			zoom_anime_image.bitmapData = new BitmapData(maplayer_width, maplayer_height)
 			//getDisplayLayer.scaleX = ge9tDisplayLayer.scaleY = 1
 		}
 		
 		/**
-		 * 移动地图. (只需要输入相对的X.Y
+		 * 移动地图. (只需要输入相对的X.Y)
 		 * @param	delta_x
 		 * @param	detal_y
 		 */
@@ -125,12 +145,22 @@ package com.lizeqiangd.basemap.layer
 			{
 				return
 			}
+			zoom_anime_image.bitmapData.dispose()
+			zoom_anime_image.bitmapData = new BitmapData(maplayer_width, maplayer_height)
+			zoom_anime_image.bitmapData.draw(this)
+			
 			removeChild(getDisplayLayer)
 			now_z_index = z
 			addChild(getDisplayLayer)
 			getDisplayLayer.resize(maplayer_width, maplayer_height)
 			getDisplayLayer.mask = sp_mask
 		}
+		
+		private function onTileLoadComplete(e:TileEvent):void
+		{
+			setTimeout(zoom_anime_image.bitmapData.dispose,1000)
+		}
+	
 	}
 
 }

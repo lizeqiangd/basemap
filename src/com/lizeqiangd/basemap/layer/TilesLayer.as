@@ -4,6 +4,7 @@ package com.lizeqiangd.basemap.layer
 	import com.lizeqiangd.basemap.component.LatLng;
 	import com.lizeqiangd.basemap.component.StartTile;
 	import com.lizeqiangd.basemap.config.MapSetting;
+	import com.lizeqiangd.basemap.evnets.TileEvent;
 	import com.lizeqiangd.basemap.parser.iMapParser;
 	import com.lizeqiangd.basemap.tile.TileLoader;
 	import flash.display.Sprite;
@@ -16,6 +17,7 @@ package com.lizeqiangd.basemap.layer
 	 * @author Lizeqiangd
 	 * 20150128 对tileloader赋瓦片大小.复用代码优化流程.删除
 	 * 20150209 重新建立计算鼠标点位置函数.之前的想复杂了
+	 * 20150214 对所有TileLoader添加加载侦听.修复逻辑错误导致庞大的错误加载
 	 */
 	
 	public class TilesLayer extends Sprite
@@ -42,6 +44,11 @@ package com.lizeqiangd.basemap.layer
 		private var bound_left:int = -1
 		private var bound_right:int = -1
 		private var tile_array:Object
+		
+		//目前加载完成的数量
+		private var now_completed_count:uint = 0
+		//总共需要加载的数量
+		private var total_need_count:uint = 0
 		
 		public function TilesLayer(z_index:uint = 0)
 		{
@@ -133,36 +140,6 @@ package com.lizeqiangd.basemap.layer
 					bound_up++
 				}
 			}
-			
-			//向左移动
-			if (deltaX < 0)
-			{
-				if (tile_array[bound_left][bound_up].x < (layer_width - map_setting.tile_size))
-				{
-					num_creates = Math.abs(bound_bottom - bound_up)
-					for (i = 0; i <= num_creates; i++)
-					{
-						createTiles(bound_right + 1, bound_up + i, _z_index)
-						_tileLoader.x = tile_array[bound_right][bound_up].x + map_setting.tile_size
-						_tileLoader.y = tile_array[bound_left][bound_up + i].y
-						addChild(_tileLoader)
-					}
-					bound_right++
-				}
-				
-				if (tile_array[bound_left][bound_up].x < -outsize)
-				{
-					for (t in tile_array[bound_left])
-					{
-						removeChild(tile_array[bound_left][t])
-						child_index--
-					}
-					delete tile_array[bound_left]
-					bound_left++
-				}
-				
-			}
-			
 			//向下移动
 			if (deltaY > 0)
 			{
@@ -190,6 +167,34 @@ package com.lizeqiangd.basemap.layer
 					bound_bottom--
 				}
 				
+			}
+			
+			//向左移动
+			if (deltaX < 0)
+			{
+				if (tile_array[bound_right][bound_bottom].x < (layer_width - map_setting.tile_size))
+				{
+					num_creates = Math.abs(bound_bottom - bound_up)
+					for (i = 0; i <= num_creates; i++)
+					{
+						createTiles(bound_right + 1, bound_up + i, _z_index)
+						_tileLoader.x = tile_array[bound_right][bound_up].x + map_setting.tile_size
+						_tileLoader.y = tile_array[bound_left][bound_up + i].y
+						addChild(_tileLoader)
+					}
+					bound_right++
+				}
+				
+				if (tile_array[bound_left][bound_up].x < -outsize)
+				{
+					for (t in tile_array[bound_left])
+					{
+						removeChild(tile_array[bound_left][t])
+						child_index--
+					}
+					delete tile_array[bound_left]
+					bound_left++
+				}
 			}
 			
 			//向右移动
@@ -320,7 +325,6 @@ package com.lizeqiangd.basemap.layer
 		{
 			tileZ == 0 ? tileZ = _z_index : null
 			_tileLoader = new TileLoader(map_setting.tile_size)
-			_tileLoader.load(map_parse.getUrlByXYZ(tileX, tileY, tileZ))
 			_tileLoader.setTilePosition(tileX, tileY, tileZ)
 			if (!tile_array[tileX])
 			{
@@ -328,14 +332,38 @@ package com.lizeqiangd.basemap.layer
 			}
 			tile_array[tileX][tileY] = _tileLoader
 			addChild(_tileLoader)
+			addTileEventListener(_tileLoader)
+			total_need_count++
+			_tileLoader.load(map_parse.getUrlByXYZ(tileX, tileY, tileZ))
 			return _tileLoader
 		}
 		
-		private function calculateLatlng():void
+		//private function calculateLatlng():void
+		//{
+		//map_setting.now_map_bound_up = startTile.lat + map_setting.now_map_bound_down
+		//map_setting.now_map_bound_left
+		//map_setting.now_map_bound_right
+		//}
+		
+		/**
+		 * 添加对瓦块加载的侦听,这样可以让全部加载完成的时候抛出事件.
+		 * @param	tl
+		 */
+		private function addTileEventListener(tl:TileLoader):void
 		{
-			map_setting.now_map_bound_up = startTile.lat + map_setting.now_map_bound_down
-			map_setting.now_map_bound_left
-			map_setting.now_map_bound_right
+			tl.addEventListener(TileEvent.TILE_LOAD_COMPLETE, onSingleTileLoadCompleted, false, 0, true)
+			tl.addEventListener(TileEvent.TILE_LOAD_ERROR, onSingleTileLoadCompleted, false, 0, true)
+		}
+		
+		private function onSingleTileLoadCompleted(e:TileEvent):void
+		{
+			now_completed_count++
+			//trace('TilesLayer:[' + _z_index + ']' + now_completed_count + '/' + total_need_count)
+			if (now_completed_count >= total_need_count)
+			{
+				now_completed_count = total_need_count = 0
+				this.dispatchEvent(new TileEvent(TileEvent.TILELAYER_LOAD_COMPLETE))
+			}
 		}
 		
 		/**

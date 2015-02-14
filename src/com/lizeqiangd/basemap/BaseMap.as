@@ -35,8 +35,6 @@ package com.lizeqiangd.basemap
 			return instance;
 		}
 		
-		//private var mask_shape:Shape
-		
 		private var _mapWidth:Number = 0
 		private var _mapHeight:Number = 0
 		

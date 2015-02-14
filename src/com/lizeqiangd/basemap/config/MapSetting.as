@@ -20,6 +20,10 @@ package com.lizeqiangd.basemap.config
 			return instance;
 		}
 		
+		/**
+		 * unavailable
+		 * @return
+		 */
 		public function parse():MapSetting
 		{
 			return this;
@@ -49,6 +53,12 @@ package com.lizeqiangd.basemap.config
 		/** 当瓦块离开屏幕tile_outsize_count个瓦块大小时移除 **/
 		public var tile_outsize_count:int = 2
 		
+		/** 瓦块模式 **/
+		public var Tile_Information_enable:Boolean = false
+		public var Tile_ProgressBar_enable:Boolean = true
+		public var Tile_Anime_enable:Boolean = true
+		public var Tile_Debug_enable:Boolean = false
+		
 		/**  mapbox setting **/
 		public var basemap_type:String = ''
 		public var mapbox_style:String = '';
@@ -66,6 +76,7 @@ package com.lizeqiangd.basemap.config
 		public const Mapbox_Type_JPG90:String = 'jpg90'
 		public const Mapbox_Tile_Size:uint = 256
 		public const Mapbox_Max_Level:uint = 22
+	
 	}
 
 }

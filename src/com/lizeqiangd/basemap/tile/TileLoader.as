@@ -1,6 +1,7 @@
 package com.lizeqiangd.basemap.tile
 {
-	//import com.lizeqiangd.basemap.config.MapSetting;
+	import com.lizeqiangd.basemap.config.MapSetting;
+	import com.lizeqiangd.basemap.evnets.TileEvent;
 	import com.lizeqiangd.basemap.interfaces.progressbar.pb_DefaultProgressBar;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -8,6 +9,7 @@ package com.lizeqiangd.basemap.tile
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.geom.Vector3D;
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
 	import flash.text.TextField;
@@ -18,12 +20,12 @@ package com.lizeqiangd.basemap.tile
 	 * 只负责加载瓦片,对外部库只引用进度条
 	 * @author Lizeqiangd
 	 * 20150128 移除对map_setting依赖
+	 * 20150214 考虑要不要增加加载时间过长重新加载的机制,返回加载完成机制给外部侦听.@TileEvent 修复有线的问题
 	 */
 	public class TileLoader extends Sprite
 	{
-		public var tile_x:int = 0
-		public var tile_y:int = 0
-		public var tile_z:int = 0
+		/**  瓦片坐标 **/
+		public var vector3d:Vector3D = new Vector3D
 		
 		/**  瓦片loader **/
 		private var loader:Loader
@@ -36,11 +38,13 @@ package com.lizeqiangd.basemap.tile
 		/** 瓦片大小 **/
 		private var tile_size:Number = 256
 		
-		private var use_anime:Boolean = true
-		private var use_progressbar:Boolean = true
-		private var use_information:Boolean = false
+		private var is_load_complete:Boolean = false
 		
-		private var use_debug:Boolean = false
+		//配置用
+		private var use_anime:Boolean = MapSetting.getInstance.Tile_Anime_enable
+		private var use_progressbar:Boolean =MapSetting.getInstance.Tile_ProgressBar_enable
+		private var use_information:Boolean = MapSetting.getInstance.Tile_Information_enable
+		private var use_debug:Boolean = MapSetting.getInstance.Tile_Debug_enable
 		
 		public function TileLoader(_tile_size:Number)
 		{
@@ -74,14 +78,14 @@ package com.lizeqiangd.basemap.tile
 		public function load(value:String):void
 		{
 			url = value
-			this.graphics.beginFill(0x222222)
+			this.graphics.beginFill(0x222222,0.2)
 			this.graphics.drawRect(0, 0, tile_size, tile_size)
 			this.graphics.endFill()
 			
 			if (use_debug)
 			{
 				this.graphics.lineStyle(1, 0xffffff)
-				this.graphics.drawRect(0, 0, tile_size, tile_size)
+				this.graphics.drawRect(1, 1, tile_size - 1, tile_size - 1)
 				loader.alpha = 0.5
 			}
 			
@@ -108,12 +112,12 @@ package com.lizeqiangd.basemap.tile
 		 */
 		public function setTilePosition(_x:Number, _y:Number, _z:Number):void
 		{
-			tile_x = _x
-			tile_y = _y
-			tile_z = _z
+			tileX = _x
+			tileY = _y
+			tileZ = _z
 			if (use_information)
 			{
-				tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z
+				tx.text = 'x:' + tileX + ' y:' + tileY + ' z:' + tileZ
 				this.cacheAsBitmap = true
 			}
 		}
@@ -128,6 +132,11 @@ package com.lizeqiangd.basemap.tile
 			this.removeChildren()
 			this.loader.unload()
 			this.loader = null
+			this.dispatchEvent(new TileEvent(TileEvent.TILE_DISPOSED))
+			if (!is_load_complete)
+			{
+				this.dispatchEvent(new TileEvent(TileEvent.TILE_LOAD_COMPLETE))
+			}
 			//this.parent.removeChild(this)
 		}
 		
@@ -164,9 +173,10 @@ package com.lizeqiangd.basemap.tile
 			trace('Tile:LoadError:' + url)
 			if (use_information)
 			{
-				tx.text = 'x:' + tile_x + ' y:' + tile_y + ' z:' + tile_z + 'failed'
+				tx.text = 'x:' + tileX + ' y:' + tileY + ' z:' + tileZ + 'failed'
 				this.cacheAsBitmap = true
 			}
+			this.dispatchEvent(new TileEvent(TileEvent.TILE_LOAD_ERROR))
 		}
 		
 		private function onLoadComplete(e:Event):void
@@ -186,6 +196,11 @@ package com.lizeqiangd.basemap.tile
 					pb = null
 				}
 			}
+			is_load_complete = true
+			this.dispatchEvent(new TileEvent(TileEvent.TILE_LOAD_COMPLETE))
+			
+			this.x=Math.floor(this.x)
+			this.y=Math.floor(this.y)
 		}
 		
 		private function onEnterFrameAnime(e:Event):void
@@ -207,7 +222,7 @@ package com.lizeqiangd.basemap.tile
 					pb = null
 				}
 				this.removeEventListener(Event.ENTER_FRAME, onEnterFrameAnime)
-				loader.cacheAsBitmap = true
+				this.cacheAsBitmap = true
 			}
 		}
 		
@@ -215,6 +230,36 @@ package com.lizeqiangd.basemap.tile
 		{
 			removeEventListener(Event.REMOVED_FROM_STAGE, onTileRemoved);
 			depose()
+		}
+		
+		public function get tileX():int
+		{
+			return vector3d.x;
+		}
+		
+		public function set tileX(value:int):void
+		{
+			vector3d.x = value;
+		}
+		
+		public function get tileY():int
+		{
+			return vector3d.y;
+		}
+		
+		public function set tileY(value:int):void
+		{
+			vector3d.y = value;
+		}
+		
+		public function get tileZ():int
+		{
+			return vector3d.z;
+		}
+		
+		public function set tileZ(value:int):void
+		{
+			vector3d.z = value;
 		}
 	}
 
