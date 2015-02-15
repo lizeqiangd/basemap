@@ -70,12 +70,9 @@ package
 			setTimeout(onStageResize, 100, null)
 			setTimeout(function():void
 				{
-					//stage.addEventListener(Event.ENTER_FRAME, onEnterFrame)
-			//MapSetting.getInstance.mapbox_style = 'mapbox.streets'
 				}, 500)
 			addChild(center_mark)			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
-			//bm.scaleX=bm.scaleY=0.1
 		}
 		
 		private function onKeyDown(e:KeyboardEvent):void
@@ -105,9 +102,9 @@ package
 		
 		private function onStageResize(e:Event):void
 		{
+			//for test mask.
 			bm.x = bm.y = 30
 			bm.setMapSize(stage.stageWidth - 60, stage.stageHeight - 60)
-			//bm.g
 			center_mark.x = stage.stageWidth / 2
 			center_mark.y = stage.stageHeight / 2
 		}

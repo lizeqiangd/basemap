@@ -70,8 +70,7 @@ package com.lizeqiangd.basemap.layer
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddToStage);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoveFromStage)
-			map_setting = MapSetting.getInstance
-		
+			map_setting = MapSetting.getInstance		
 		}
 		
 		/**
