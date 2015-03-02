@@ -70,7 +70,7 @@ package com.lizeqiangd.basemap.layer
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddToStage);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoveFromStage)
-			map_setting = MapSetting.getInstance		
+			map_setting = MapSetting.getInstance
 		}
 		
 		/**
@@ -258,9 +258,7 @@ package com.lizeqiangd.basemap.layer
 			var delta_tile_lat:Number = up_tile_lat - down_tile_lat
 			ll.lng = startTile.lng + 360 * ((_x + startTile.offsetX - layer_width / 2 - total_movement_x) / map_setting.Mapbox_Tile_Size) / Math.pow(2, _z_index)
 			ll.lat = up_tile_lat - (delta_tileY + Math.pow(2, _z_index)) % 1 * delta_tile_lat
-			//trace(startTile)
-			//trace(total_movement_x, total_movement_y)
-			trace(ll)
+			//trace(ll)
 			return ll
 		}
 		
@@ -336,14 +334,7 @@ package com.lizeqiangd.basemap.layer
 			_tileLoader.load(map_parse.getUrlByXYZ(tileX, tileY, tileZ))
 			return _tileLoader
 		}
-		
-		//private function calculateLatlng():void
-		//{
-		//map_setting.now_map_bound_up = startTile.lat + map_setting.now_map_bound_down
-		//map_setting.now_map_bound_left
-		//map_setting.now_map_bound_right
-		//}
-		
+				
 		/**
 		 * 添加对瓦块加载的侦听,这样可以让全部加载完成的时候抛出事件.
 		 * @param	tl
